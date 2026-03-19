@@ -3,7 +3,7 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const KNOWLEDGE_DIR = join(__dirname, "..", "..", "knowledge");
+const KNOWLEDGE_DIR = join(__dirname, "..", "knowledge");
 
 /**
  * Load a JSON knowledge file
