@@ -1,0 +1,175 @@
+# Directive Cheatsheet
+
+Complete reference of every No.JS directive.
+
+## Data
+
+| Directive | Example | Description |
+|-----------|---------|-------------|
+| `base` | `base="https://api.com"` | Set API base URL for descendants |
+| `get` | `get="/users"` | Fetch data (GET) |
+| `post` | `post="/login"` | Submit data (POST) |
+| `put` | `put="/users/1"` | Update data (PUT) |
+| `patch` | `patch="/users/1"` | Partial update (PATCH) |
+| `delete` | `delete="/users/1"` | Delete data (DELETE) |
+| `as` | `as="users"` | Name for fetched data in context |
+| `body` | `body='{"key":"val"}'` | Request body |
+| `headers` | `headers='{"Auth":"Bearer x"}'` | Request headers |
+| `params` | `params="{ page: 1 }"` | Query parameters |
+| `cached` | `cached` or `cached="local"` | Cache responses (memory/local/session) |
+| `into` | `into="currentUser"` | Write response to a named global store |
+| `debounce` | `debounce="300"` | Debounce reactive URL refetches (ms) |
+
+## State
+
+| Directive | Example | Description |
+|-----------|---------|-------------|
+| `state` | `state="{ count: 0 }"` | Create local reactive state |
+| `store` | `store="auth"` | Define/access global store |
+| `computed` | `computed="total" expr="a+b"` | Derived reactive value |
+| `watch` | `watch="search"` | React to value changes |
+| `persist` | `persist="localStorage"` | Persist state to storage |
+| `model` | `model="name"` | Two-way binding for inputs |
+
+## Rendering
+
+| Directive | Example | Description |
+|-----------|---------|-------------|
+| `bind` | `bind="user.name"` | Set text content |
+| `bind-html` | `bind-html="content"` | Set innerHTML (sanitized) |
+| `bind-*` | `bind-src="url"` | Bind any attribute |
+| `if` | `if="condition"` | Conditional render |
+| `else-if` | `else-if="cond"` | Chained conditional |
+| `then` | `then="templateId"` | Template for truthy |
+| `else` | `else="templateId"` | Template for falsy |
+| `show` | `show="condition"` | Toggle visibility (CSS) |
+| `hide` | `hide="condition"` | Inverse of show |
+| `switch` | `switch="value"` | Switch/case render |
+| `case` | `case="'admin'"` | Case match |
+| `default` | `default` | Default case |
+
+## Loops
+
+| Directive | Example | Description |
+|-----------|---------|-------------|
+| `each` | `each="item in items"` | Simple loop |
+| `foreach` | `foreach="item"` | Extended loop |
+| `from` | `from="items"` | Source array |
+| `template` | `template="tplId"` | Template to clone |
+| `index` | `index="i"` | Index variable name |
+| `key` | `key="item.id"` | Unique key for diffing |
+| `filter` | `filter="item.active"` | Filter expression |
+| `sort` | `sort="item.name"` | Sort property |
+| `limit` | `limit="10"` | Max items |
+| `offset` | `offset="5"` | Skip items |
+
+## Events
+
+| Directive | Example | Description |
+|-----------|---------|-------------|
+| `on:click` | `on:click="count++"` | Click handler |
+| `on:submit` | `on:submit.prevent="..."` | Submit handler |
+| `on:input` | `on:input="..."` | Input handler |
+| `on:keydown.*` | `on:keydown.enter="..."` | Key handler |
+| `on:mounted` | `on:mounted="init()"` | Lifecycle: mounted |
+| `on:unmounted` | `on:unmounted="cleanup()"` | Lifecycle: unmounted |
+
+## Styling
+
+| Directive | Example | Description |
+|-----------|---------|-------------|
+| `class-*` | `class-active="isOn"` | Toggle CSS class |
+| `class-map` | `class-map="{ a: x }"` | Class from object |
+| `style-*` | `style-color="c"` | Set inline style |
+| `style-map` | `style-map="{ ... }"` | Style from object |
+
+## Forms
+
+| Directive | Example | Description |
+|-----------|---------|-------------|
+| `validate` | `validate` or `validate="email"` | Enable form/field validation |
+| `error` | `error="#tpl"` | Error template for field |
+| `success` | `success="#tpl"` | Success template |
+| `loading` | `loading="#tpl"` | Loading template |
+| `confirm` | `confirm="Sure?"` | Confirmation dialog |
+| `redirect` | `redirect="/home"` | Redirect on success |
+
+## Routing
+
+| Directive | Example | Description |
+|-----------|---------|-------------|
+| `route` | `route="/path"` | Define route or link |
+| `route="*"` | `route="*"` | Catch-all 404 wildcard route |
+| `route-view` | `route-view` | Route outlet |
+| `route-view="name"` | `route-view="sidebar"` | Named route outlet |
+| `route-view[src]` | `route-view src="./pages/"` | File-based routing outlet |
+| `route-index` | `route-index="overview"` | Filename for root `/` (default `"index"`) |
+| `ext` | `ext=".html"` | File extension (default `".tpl"`, fallback `".html"`) |
+| `i18n-ns` | `i18n-ns` | Auto-derive i18n namespace from route filename |
+| `outlet` | `outlet="sidebar"` | Target a named outlet from a route template |
+| `route-active` | `route-active="cls"` | Active link class |
+| `guard` | `guard="expr"` | Route guard condition |
+| `lazy` | `lazy="ondemand"` | Defer route template fetch until first visit |
+| `lazy` | `lazy="priority"` | Force template to load before all others |
+| `$route.matched` | `if="$route.matched"` | `true` if an explicit route matched, `false` for wildcard/fallback |
+
+## Animation
+
+| Directive | Example | Description |
+|-----------|---------|-------------|
+| `animate` | `animate="fadeIn"` | Enter animation |
+| `animate-enter` | `animate-enter="slideIn"` | Enter animation |
+| `animate-leave` | `animate-leave="slideOut"` | Leave animation |
+| `animate-duration` | `animate-duration="300"` | Duration in ms |
+| `animate-stagger` | `animate-stagger="50"` | Stagger delay |
+| `transition` | `transition="fade"` | CSS transition |
+
+## Drag and Drop
+
+| Directive | Example | Description |
+|-----------|---------|-------------|
+| `drag` | `drag` | Make element draggable |
+| `drag-type` | `drag-type="task"` | Data type identifier |
+| `drag-effect` | `drag-effect="move"` | Allowed effect (move/copy/link/all) |
+| `drag-handle` | `drag-handle=".handle"` | Restrict drag to handle selector |
+| `drag-disabled` | `drag-disabled="locked"` | Disable drag conditionally |
+| `drag-class` | `drag-class="dragging"` | Class added while dragging |
+| `drag-group` | `drag-group="board"` | Scope drag to a named group |
+| `drop` | `drop` | Make element a drop zone |
+| `drop-accept` | `drop-accept="task"` | Accepted drag type(s) |
+| `drop-effect` | `drop-effect="move"` | Visual feedback effect |
+| `drop-class` | `drop-class="over"` | Class added on drag-over |
+| `drop-reject-class` | `drop-reject-class="nope"` | Class added on rejected drag-over |
+| `drop-disabled` | `drop-disabled="full"` | Disable drop conditionally |
+| `drop-max` | `drop-max="5"` | Maximum items in drop zone |
+| `drop-sort` | `drop-sort` | Enable positional sorting |
+| `drop-placeholder` | `drop-placeholder="#ph"` | Placeholder template during drag-over |
+| `drop-settle-class` | `drop-settle-class="my-settle"` | Custom CSS class for settle animation |
+| `drop-empty-class` | `drop-empty-class="empty"` | Custom CSS class for empty state on drag-list |
+| `drag-list` | `drag-list="items"` | Sortable list bound to state array |
+| `drag-list-key` | `drag-list-key="id"` | Unique key for each item |
+| `drag-list-item` | `drag-list-item="task"` | Loop variable name in template |
+| `drag-list-copy` | `drag-list-copy` | Copy instead of move on transfer |
+| `drag-list-remove` | `drag-list-remove` | Remove items from source on transfer |
+| `drag-multiple` | `drag-multiple` | Lasso / multi-select on children |
+| `drag-multiple-class` | `drag-multiple-class="selected"` | Class added to selected items |
+
+## i18n
+
+| Directive | Example | Description |
+|-----------|---------|-------------|
+| `t` | `t="greeting"` | Translate key |
+| `t-*` | `t-name="user.name"` | Translation param |
+
+## Misc
+
+| Directive | Example | Description |
+|-----------|---------|-------------|
+| `ref` | `ref="input"` | Named element ref |
+| `call` | `call="/api/action" method="post"` | Trigger API call on click |
+| `trigger` | `trigger="event-name"` | Emit custom event |
+| `use` | `use="templateId"` | Instantiate template |
+| `src` (on template) | `src="/tpl.html"` | Remote template (see also: `lazy`) |
+| `loading` (on template) | `<template src="..." loading="#skl">` | Placeholder shown while remote template loads; removed on arrival |
+| `include` (on template) | `<template include="#fragment">` | Synchronously clone an inline template into the current position |
+| `error-boundary` | `error-boundary="#fb"` | Error boundary |

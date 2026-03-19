@@ -1,0 +1,228 @@
+{
+    "version": "1.9.1",
+    "categories": [
+        {
+            "id": "text",
+            "name": "Text"
+        },
+        {
+            "id": "numbers",
+            "name": "Numbers"
+        },
+        {
+            "id": "arrays",
+            "name": "Arrays"
+        },
+        {
+            "id": "date",
+            "name": "Date"
+        },
+        {
+            "id": "utility",
+            "name": "Utility"
+        }
+    ],
+    "filters": [
+        {
+            "name": "uppercase",
+            "category": "text",
+            "description": "Convert to uppercase",
+            "syntax": "value | uppercase",
+            "example": "{{ name | uppercase }}"
+        },
+        {
+            "name": "lowercase",
+            "category": "text",
+            "description": "Convert to lowercase",
+            "syntax": "value | lowercase"
+        },
+        {
+            "name": "capitalize",
+            "category": "text",
+            "description": "Capitalize first letter of each word",
+            "syntax": "value | capitalize"
+        },
+        {
+            "name": "truncate",
+            "category": "text",
+            "description": "Truncate to N characters with ellipsis",
+            "syntax": "value | truncate(100)",
+            "example": "{{ description | truncate(50) }}"
+        },
+        {
+            "name": "trim",
+            "category": "text",
+            "description": "Remove whitespace from both ends",
+            "syntax": "value | trim"
+        },
+        {
+            "name": "stripHtml",
+            "category": "text",
+            "description": "Remove all HTML tags",
+            "syntax": "value | stripHtml"
+        },
+        {
+            "name": "slugify",
+            "category": "text",
+            "description": "Convert to URL slug",
+            "syntax": "value | slugify",
+            "example": "'Hello World' → 'hello-world'"
+        },
+        {
+            "name": "nl2br",
+            "category": "text",
+            "description": "Convert newlines to <br>",
+            "syntax": "value | nl2br"
+        },
+        {
+            "name": "encodeUri",
+            "category": "text",
+            "description": "URL-encode a string",
+            "syntax": "value | encodeUri"
+        },
+        {
+            "name": "number",
+            "category": "numbers",
+            "description": "Format number with locale and decimal places",
+            "syntax": "value | number(2)",
+            "example": "1234.5 → '1,234.50'"
+        },
+        {
+            "name": "currency",
+            "category": "numbers",
+            "description": "Format as currency",
+            "syntax": "value | currency('USD')",
+            "example": "29.99 → '$29.99'"
+        },
+        {
+            "name": "percent",
+            "category": "numbers",
+            "description": "Format as percentage (multiplies by 100)",
+            "syntax": "value | percent(1)",
+            "example": "0.85 → '85.0%'"
+        },
+        {
+            "name": "filesize",
+            "category": "numbers",
+            "description": "Format bytes as human-readable file size",
+            "syntax": "value | filesize",
+            "example": "1536 → '1.5 KB'"
+        },
+        {
+            "name": "ordinal",
+            "category": "numbers",
+            "description": "Add ordinal suffix",
+            "syntax": "value | ordinal",
+            "example": "1 → '1st', 2 → '2nd'"
+        },
+        {
+            "name": "count",
+            "category": "arrays",
+            "description": "Return array length",
+            "syntax": "array | count"
+        },
+        {
+            "name": "first",
+            "category": "arrays",
+            "description": "Return first element",
+            "syntax": "array | first"
+        },
+        {
+            "name": "last",
+            "category": "arrays",
+            "description": "Return last element",
+            "syntax": "array | last"
+        },
+        {
+            "name": "join",
+            "category": "arrays",
+            "description": "Join array elements with separator",
+            "syntax": "array | join(', ')"
+        },
+        {
+            "name": "reverse",
+            "category": "arrays",
+            "description": "Reverse array",
+            "syntax": "array | reverse"
+        },
+        {
+            "name": "unique",
+            "category": "arrays",
+            "description": "Remove duplicates",
+            "syntax": "array | unique"
+        },
+        {
+            "name": "pluck",
+            "category": "arrays",
+            "description": "Extract a property from each item",
+            "syntax": "array | pluck('name')"
+        },
+        {
+            "name": "sortBy",
+            "category": "arrays",
+            "description": "Sort array by property (prefix with - for descending)",
+            "syntax": "array | sortBy('name')",
+            "example": "sortBy('-date') for descending"
+        },
+        {
+            "name": "where",
+            "category": "arrays",
+            "description": "Filter array by property value",
+            "syntax": "array | where('active', true)"
+        },
+        {
+            "name": "date",
+            "category": "date",
+            "description": "Format date (short, long, or full)",
+            "syntax": "value | date('long')"
+        },
+        {
+            "name": "datetime",
+            "category": "date",
+            "description": "Format as date and time",
+            "syntax": "value | datetime"
+        },
+        {
+            "name": "relative",
+            "category": "date",
+            "description": "Relative time (e.g., '5m ago', '2h ago')",
+            "syntax": "value | relative"
+        },
+        {
+            "name": "fromNow",
+            "category": "date",
+            "description": "Future relative time (e.g., 'in 3h')",
+            "syntax": "value | fromNow"
+        },
+        {
+            "name": "default",
+            "category": "utility",
+            "description": "Fallback value when null/empty",
+            "syntax": "value | default('N/A')"
+        },
+        {
+            "name": "json",
+            "category": "utility",
+            "description": "Pretty-print as JSON",
+            "syntax": "value | json(2)"
+        },
+        {
+            "name": "debug",
+            "category": "utility",
+            "description": "Console.log the value (pass-through)",
+            "syntax": "value | debug"
+        },
+        {
+            "name": "keys",
+            "category": "utility",
+            "description": "Return object keys as array",
+            "syntax": "value | keys"
+        },
+        {
+            "name": "values",
+            "category": "utility",
+            "description": "Return object values as array",
+            "syntax": "value | values"
+        }
+    ]
+}

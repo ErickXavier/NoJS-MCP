@@ -1,0 +1,111 @@
+{
+    "version": "1.9.1",
+    "name": "No.JS",
+    "tagline": "The HTML-First Reactive Framework",
+    "description": "Build dynamic, reactive web applications using nothing but HTML attributes. No build step. No virtual DOM. No transpiler. No JSX. Just HTML.",
+    "size": "~24 KB gzipped",
+    "dependencies": "Zero",
+    "cdn": "https://cdn.no-js.dev/",
+    "github": "https://github.com/ErickXavier/no-js",
+    "website": "https://no-js.dev/",
+    "lsp": "https://lsp.no-js.dev/",
+    "api": {
+        "config": {
+            "description": "Configure NoJS settings",
+            "syntax": "NoJS.config(options)",
+            "options": {
+                "debug": "boolean — enable debug logging",
+                "baseApiUrl": "string — default API base URL",
+                "router": {
+                    "useHash": "boolean — use hash-based routing (default: false)",
+                    "base": "string — base path for the app"
+                },
+                "headers": "object — default request headers",
+                "csrf": "object — CSRF token configuration",
+                "cache": "object — cache settings",
+                "templates": "object — template loading settings",
+                "stores": "object — define global stores at config time",
+                "i18n": "object — i18n settings (see NoJS.i18n())"
+            }
+        },
+        "init": {
+            "description": "Initialize NoJS on a root element",
+            "syntax": "NoJS.init(root?)",
+            "notes": "Called automatically by CDN script. Only needed for npm/ESM usage."
+        },
+        "directive": {
+            "description": "Register a custom directive",
+            "syntax": "NoJS.directive(name, handler)",
+            "example": "NoJS.directive('tooltip', {\n  init(el, attrName, value) {\n    el.title = value;\n    el.style.cursor = 'help';\n  }\n});"
+        },
+        "filter": {
+            "description": "Register a custom filter",
+            "syntax": "NoJS.filter(name, fn)",
+            "example": "NoJS.filter('initials', (name) => {\n  return name.split(' ').map(w => w[0]).join('').toUpperCase();\n});"
+        },
+        "validator": {
+            "description": "Register a custom validator",
+            "syntax": "NoJS.validator(name, fn)",
+            "example": "NoJS.validator('phone', (value) => {\n  return /^\\+?[\\d\\s\\-()]{7,15}$/.test(value);\n});"
+        },
+        "i18n": {
+            "description": "Configure internationalization",
+            "syntax": "NoJS.i18n(options)",
+            "options": {
+                "loadPath": "string — URL pattern for locale files, e.g. 'locales/{locale}/{ns}.json'",
+                "ns": "string[] — namespaces to load",
+                "defaultLocale": "string — default locale",
+                "fallbackLocale": "string — fallback locale",
+                "persist": "boolean — persist locale to localStorage",
+                "detectBrowser": "boolean — detect browser language",
+                "locales": "object — inline locale definitions"
+            }
+        },
+        "on": {
+            "description": "Subscribe to global event bus",
+            "syntax": "const unsub = NoJS.on(event, callback)",
+            "notes": "Returns an unsubscribe function"
+        },
+        "interceptor": {
+            "description": "Register request/response interceptors for fetch directives",
+            "syntax": "NoJS.interceptor(type, fn)",
+            "example": "NoJS.interceptor('request', (url, opts) => {\n  opts.headers['Authorization'] = 'Bearer ' + token;\n  return [url, opts];\n});"
+        },
+        "store": {
+            "description": "Access global stores",
+            "syntax": "NoJS.store",
+            "notes": "Returns the _stores object. Access individual stores: NoJS.store.auth"
+        },
+        "notify": {
+            "description": "Notify all store watchers after external JavaScript mutations to NoJS.store",
+            "syntax": "NoJS.notify()",
+            "example": "NoJS.store.cart.items.push(newItem);\nNoJS.notify(); // UI updates"
+        },
+        "router": {
+            "description": "Access the router instance",
+            "syntax": "NoJS.router",
+            "notes": "Provides navigate(), back(), forward(), etc."
+        },
+        "locale": {
+            "description": "Get or set the current locale",
+            "syntax": "NoJS.locale = 'pt'"
+        },
+        "baseApiUrl": {
+            "description": "Get or set the API base URL",
+            "syntax": "NoJS.baseApiUrl = 'https://api.example.com'"
+        },
+        "version": {
+            "description": "Current NoJS version",
+            "syntax": "NoJS.version",
+            "value": "1.9.1"
+        }
+    },
+    "utilities": {
+        "createContext": "Create a reactive context manually",
+        "evaluate": "Evaluate an expression string in a context",
+        "findContext": "Find the nearest reactive context for a DOM element",
+        "processTree": "Process a DOM subtree to activate directives",
+        "resolve": "Resolve a property path from a context"
+    },
+    "quickStart": "<!DOCTYPE html>\n<html>\n<head>\n  <script src=\"https://cdn.no-js.dev/\"></script>\n</head>\n<body base=\"https://jsonplaceholder.typicode.com\">\n  <div get=\"/users\" as=\"users\">\n    <div each=\"user in users\">\n      <h2 bind=\"user.name\"></h2>\n      <p bind=\"user.email\"></p>\n    </div>\n  </div>\n</body>\n</html>"
+}

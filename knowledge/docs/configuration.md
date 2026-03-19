@@ -1,0 +1,198 @@
+# Configuration & Security
+
+## Global Settings
+
+```html
+<script>
+  NoJS.config({
+    // API
+    baseApiUrl: 'https://api.myapp.com/v1',
+    headers: { 'Authorization': 'Bearer xxx' },
+    timeout: 10000,
+    retries: 2,
+    retryDelay: 1000,
+    credentials: 'include',    // fetch credentials mode
+
+    // CSRF
+    csrf: {
+      header: 'X-CSRF-Token',
+      token: '...'
+    },
+
+    // Caching
+    cache: {
+      strategy: 'memory',     // 'none' | 'memory' | 'session' | 'local'
+      ttl: 300000              // 5 minutes
+    },
+
+    // Templates
+    templates: {
+      cache: true             // Cache fetched .tpl HTML in memory (default: true)
+    },
+
+    // Router
+    router: {
+      useHash: false,          // true = hash mode, false = history mode (default)
+      base: '/',
+      scrollBehavior: 'top',  // 'top' | 'preserve' | 'smooth'
+      templates: 'pages',       // Default base path for file-based routing (default: 'pages')
+      ext: '.tpl'              // Default file extension for file-based routing (fallback: '.html')
+    },
+    // Note: Anchor links (href="#id") are automatically
+    // intercepted in both modes — they scroll to the target
+    // element without triggering route navigation.
+
+    // i18n
+    i18n: {
+      defaultLocale: 'en',
+      fallbackLocale: 'en',
+      detectBrowser: true,
+      loadPath: '/locales/{locale}.json',  // Load from external JSON (default: null)
+      ns: ['common'],           // Namespaces to preload (default: [])
+      cache: true               // Cache fetched locale files (default: true)
+    },
+
+    // Debugging
+    debug: true,               // Logs directive processing
+    devtools: true,            // Enables browser devtools panel
+
+    // Security
+    sanitize: true,            // Sanitize bind-html
+  });
+</script>
+```
+
+---
+
+## Pre-initializing Stores
+
+Use `stores` in `NoJS.config()` to create multiple global stores before the DOM is processed.
+This is useful when stores need to exist before any HTML directive runs — for example, when setting auth state from a JWT, or hydrating from `localStorage`.
+
+```html
+<script>
+  NoJS.config({
+    stores: {
+      auth:  { user: null, token: localStorage.getItem('token') },
+      cart:  { items: [], total: 0 },
+      theme: { mode: 'dark', accent: 'blue' }
+    }
+  });
+</script>
+```
+
+Stores created via `config()` behave exactly like those declared with the `store` HTML attribute — they are reactive contexts accessible via `$store.name` in expressions and `NoJS.store.name` in JavaScript.
+
+If a store name already exists, `config()` will **not** overwrite it. This means you can safely call `config()` multiple times without resetting store data.
+
+---
+
+## Request Interceptors
+
+```html
+<script>
+  // Before every request
+  NoJS.interceptor('request', (url, options) => {
+    options.headers['X-Request-ID'] = crypto.randomUUID();
+    return options;
+  });
+
+  // After every response
+  NoJS.interceptor('response', (response, url) => {
+    if (response.status === 401) {
+      NoJS.store.auth.user = null;
+      NoJS.notify(); // flush DOM bindings before redirect
+      NoJS.router.push('/login');
+      throw new Error('Unauthorized');
+    }
+    return response;
+  });
+</script>
+```
+
+---
+
+## Security
+
+### XSS Protection
+
+- `bind` always sets `textContent`, never `innerHTML` — safe by default.
+- `bind-html` sanitizes content through a DOMPurify-compatible sanitizer.
+- Template expressions are evaluated by a custom sandboxed parser — no `eval()` or `Function()` is used, and dangerous properties like `__proto__` and `constructor` are blocked.
+
+### CSRF Protection
+
+```html
+<script>
+  NoJS.config({
+    csrf: {
+      header: 'X-CSRF-Token',
+      token: document.querySelector('meta[name="csrf-token"]').content
+    }
+  });
+</script>
+```
+
+### Content Security Policy
+
+No.JS uses a custom expression parser that is fully CSP-compliant — no `eval()` or `Function()` constructor is used. No `unsafe-eval` directive is required in your Content Security Policy.
+
+---
+
+### `templates.cache`
+
+**Type:** `boolean` | **Default:** `true`
+
+Controls whether the HTML content of remotely-fetched `.tpl` files is stored in an in-memory `Map` after the first request. On repeated navigations to the same route, the cached HTML is used directly — no HTTP request is made. The cache lives for the duration of the page session (no TTL — template assets are static, not data).
+
+```js
+// Disable template caching (always re-fetch .tpl files)
+NoJS.config({ templates: { cache: false } });
+
+// Default — caching is on, no configuration needed
+NoJS.config({ templates: { cache: true } });
+```
+
+Set to `false` during local development if you want changes to `.tpl` files to be reflected without a hard page reload.
+
+---
+
+### `i18n.loadPath`
+
+**Type:** `string | null` | **Default:** `null`
+
+URL template for loading locale JSON files via `fetch`. Use `{locale}` and optionally `{ns}` as placeholders. When `null`, translations must be provided inline via `NoJS.i18n({ locales })`.
+
+```js
+NoJS.i18n({
+  loadPath: '/locales/{locale}.json'          // Flat mode
+  loadPath: '/locales/{locale}/{ns}.json'   // Namespace mode
+});
+```
+
+### `i18n.ns`
+
+**Type:** `string[]` | **Default:** `[]`
+
+Array of namespace identifiers to preload at `init()`. Each namespace corresponds to a separate JSON file per locale. Additional namespaces can be loaded on-demand via the `i18n-ns` directive or route attribute.
+
+```js
+NoJS.i18n({
+  loadPath: '/locales/{locale}/{ns}.json',
+  ns: ['common', 'auth']
+});
+```
+
+### `i18n.cache`
+
+**Type:** `boolean` | **Default:** `true`
+
+Controls whether fetched locale JSON files are stored in an in-memory `Map` after the first request. Set to `false` during development for hot-reload of translation files.
+
+```js
+NoJS.i18n({ cache: false }); // Always re-fetch locale files
+```
+
+---
+
+**Next:** [Directive Cheatsheet →](cheatsheet.md)

@@ -1,0 +1,725 @@
+{
+    "version": "1.9.1",
+    "categories": [
+        {
+            "id": "data",
+            "name": "Data Fetching",
+            "description": "Declarative HTTP requests via HTML attributes"
+        },
+        {
+            "id": "state",
+            "name": "State Management",
+            "description": "Local and global reactive state"
+        },
+        {
+            "id": "binding",
+            "name": "Rendering & Binding",
+            "description": "One-way and two-way data binding"
+        },
+        {
+            "id": "conditionals",
+            "name": "Conditionals",
+            "description": "Conditional rendering and visibility"
+        },
+        {
+            "id": "loops",
+            "name": "Loops",
+            "description": "List rendering with iteration"
+        },
+        {
+            "id": "events",
+            "name": "Events",
+            "description": "Event handling and lifecycle hooks"
+        },
+        {
+            "id": "styling",
+            "name": "Styling",
+            "description": "Dynamic CSS classes and inline styles"
+        },
+        {
+            "id": "forms",
+            "name": "Forms & Validation",
+            "description": "Built-in form validation with $form context"
+        },
+        {
+            "id": "routing",
+            "name": "Routing",
+            "description": "Client-side SPA routing"
+        },
+        {
+            "id": "animation",
+            "name": "Animation",
+            "description": "Enter/leave animations and transitions"
+        },
+        {
+            "id": "dnd",
+            "name": "Drag and Drop",
+            "description": "Declarative drag-and-drop system"
+        },
+        {
+            "id": "i18n",
+            "name": "Internationalization",
+            "description": "Translation directives"
+        },
+        {
+            "id": "refs",
+            "name": "Refs & Templates",
+            "description": "Element references and template instantiation"
+        },
+        {
+            "id": "misc",
+            "name": "Miscellaneous",
+            "description": "Utility directives"
+        }
+    ],
+    "directives": [
+        {
+            "name": "base",
+            "category": "data",
+            "description": "Set API base URL for all descendant HTTP directives",
+            "syntax": "<element base=\"https://api.example.com\">",
+            "examples": [
+                {
+                    "html": "<body base=\"https://jsonplaceholder.typicode.com\">",
+                    "description": "Set base URL for all fetch directives"
+                }
+            ]
+        },
+        {
+            "name": "get",
+            "category": "data",
+            "description": "Fetch data via HTTP GET request",
+            "syntax": "<element get=\"/endpoint\" as=\"dataVar\">",
+            "examples": [
+                {
+                    "html": "<div get=\"/users\" as=\"users\">\n  <div each=\"user in users\">\n    <h2 bind=\"user.name\"></h2>\n  </div>\n</div>",
+                    "description": "Fetch and display a list of users"
+                }
+            ]
+        },
+        {
+            "name": "post",
+            "category": "data",
+            "description": "Submit data via HTTP POST request",
+            "syntax": "<element post=\"/endpoint\" body=\"{expression}\">",
+            "examples": [
+                {
+                    "html": "<form post=\"/login\" body=\"{ email, password }\" as=\"result\">\n  <input model=\"email\">\n  <input model=\"password\" type=\"password\">\n  <button>Login</button>\n</form>",
+                    "description": "Submit login form via POST"
+                }
+            ]
+        },
+        {
+            "name": "put",
+            "category": "data",
+            "description": "Update data via HTTP PUT request",
+            "syntax": "<element put=\"/endpoint\" body=\"{expression}\">"
+        },
+        {
+            "name": "patch",
+            "category": "data",
+            "description": "Partial update via HTTP PATCH request",
+            "syntax": "<element patch=\"/endpoint\" body=\"{expression}\">"
+        },
+        {
+            "name": "delete",
+            "category": "data",
+            "description": "Delete data via HTTP DELETE request",
+            "syntax": "<element delete=\"/endpoint\">"
+        },
+        {
+            "name": "as",
+            "category": "data",
+            "description": "Name for fetched data in the local context",
+            "syntax": "<element get=\"/data\" as=\"varName\">",
+            "examples": [
+                {
+                    "html": "<div get=\"/users/1\" as=\"user\">\n  <h1 bind=\"user.name\"></h1>\n</div>",
+                    "description": "Store fetched data as 'user'"
+                }
+            ]
+        },
+        {
+            "name": "body",
+            "category": "data",
+            "description": "Request body for POST/PUT/PATCH requests",
+            "syntax": "<element post=\"/api\" body=\"{ key: value }\">"
+        },
+        {
+            "name": "headers",
+            "category": "data",
+            "description": "Custom request headers",
+            "syntax": "<element get=\"/api\" headers='{\"Authorization\": \"Bearer token\"}'>"
+        },
+        {
+            "name": "params",
+            "category": "data",
+            "description": "Query parameters appended to the URL",
+            "syntax": "<element get=\"/search\" params=\"{ q: query, page: 1 }\">"
+        },
+        {
+            "name": "cached",
+            "category": "data",
+            "description": "Cache HTTP responses. Options: memory (default), local (localStorage), session (sessionStorage)",
+            "syntax": "<element get=\"/data\" cached>"
+        },
+        {
+            "name": "into",
+            "category": "data",
+            "description": "Write response to a named global store",
+            "syntax": "<element get=\"/user\" into=\"currentUser\">"
+        },
+        {
+            "name": "debounce",
+            "category": "data",
+            "description": "Debounce reactive URL refetches (milliseconds)",
+            "syntax": "<element get=\"/search?q={query}\" debounce=\"300\">"
+        },
+        {
+            "name": "state",
+            "category": "state",
+            "description": "Create local reactive state on an element",
+            "syntax": "<element state=\"{ key: value }\">",
+            "examples": [
+                {
+                    "html": "<div state=\"{ count: 0 }\">\n  <span bind=\"count\"></span>\n  <button on:click=\"count++\">+1</button>\n</div>",
+                    "description": "Counter with local state"
+                }
+            ]
+        },
+        {
+            "name": "store",
+            "category": "state",
+            "description": "Define or access a global reactive store",
+            "syntax": "<element store=\"storeName\">",
+            "examples": [
+                {
+                    "html": "<div store=\"auth\" state=\"{ user: null, token: '' }\">\n  <span bind=\"user?.name\"></span>\n</div>",
+                    "description": "Define a global auth store"
+                }
+            ]
+        },
+        {
+            "name": "computed",
+            "category": "state",
+            "description": "Derived reactive value, recomputed when dependencies change",
+            "syntax": "<element computed=\"name\" expr=\"expression\">"
+        },
+        {
+            "name": "watch",
+            "category": "state",
+            "description": "React to value changes by executing an expression",
+            "syntax": "<element watch=\"property\" on:change=\"handler\">"
+        },
+        {
+            "name": "persist",
+            "category": "state",
+            "description": "Persist state to localStorage or sessionStorage",
+            "syntax": "<element state=\"{...}\" persist=\"localStorage\">"
+        },
+        {
+            "name": "model",
+            "category": "binding",
+            "description": "Two-way binding for input elements",
+            "syntax": "<input model=\"property\">",
+            "examples": [
+                {
+                    "html": "<div state=\"{ name: '' }\">\n  <input model=\"name\" placeholder=\"Type your name\">\n  <p>Hello, <span bind=\"name\"></span>!</p>\n</div>",
+                    "description": "Two-way binding with live preview"
+                }
+            ]
+        },
+        {
+            "name": "bind",
+            "category": "binding",
+            "description": "One-way data binding — sets element textContent",
+            "syntax": "<element bind=\"expression\">",
+            "examples": [
+                {
+                    "html": "<h1 bind=\"user.name\"></h1>",
+                    "description": "Display user name"
+                },
+                {
+                    "html": "<span bind=\"'Total: ' + items.length\"></span>",
+                    "description": "Bind to an expression"
+                }
+            ]
+        },
+        {
+            "name": "bind-html",
+            "category": "binding",
+            "description": "Set innerHTML (sanitized) from an expression",
+            "syntax": "<element bind-html=\"expression\">"
+        },
+        {
+            "name": "bind-*",
+            "category": "binding",
+            "description": "Bind any HTML attribute to an expression",
+            "syntax": "<element bind-attr=\"expression\">",
+            "examples": [
+                {
+                    "html": "<img bind-src=\"user.avatar\" bind-alt=\"user.name\">",
+                    "description": "Bind src and alt attributes"
+                },
+                {
+                    "html": "<a bind-href=\"'/users/' + user.id\">Profile</a>",
+                    "description": "Dynamic href"
+                }
+            ]
+        },
+        {
+            "name": "if",
+            "category": "conditionals",
+            "description": "Conditionally render element (removes from DOM when false)",
+            "syntax": "<element if=\"condition\">",
+            "examples": [
+                {
+                    "html": "<div if=\"user\">\n  <h1 bind=\"user.name\"></h1>\n</div>",
+                    "description": "Show only when user exists"
+                }
+            ]
+        },
+        {
+            "name": "else-if",
+            "category": "conditionals",
+            "description": "Chained conditional following an if",
+            "syntax": "<element else-if=\"condition\">"
+        },
+        {
+            "name": "then",
+            "category": "conditionals",
+            "description": "Template to render when condition is truthy",
+            "syntax": "<element if=\"condition\" then=\"templateId\">"
+        },
+        {
+            "name": "else",
+            "category": "conditionals",
+            "description": "Template to render when condition is falsy, or fallback block after if",
+            "syntax": "<element if=\"condition\" else=\"templateId\">"
+        },
+        {
+            "name": "show",
+            "category": "conditionals",
+            "description": "Toggle element visibility via CSS display (element stays in DOM)",
+            "syntax": "<element show=\"condition\">"
+        },
+        {
+            "name": "hide",
+            "category": "conditionals",
+            "description": "Inverse of show — hides element when condition is true",
+            "syntax": "<element hide=\"condition\">"
+        },
+        {
+            "name": "switch",
+            "category": "conditionals",
+            "description": "Switch/case rendering based on a value",
+            "syntax": "<element switch=\"expression\">"
+        },
+        {
+            "name": "case",
+            "category": "conditionals",
+            "description": "Case match inside a switch block",
+            "syntax": "<element case=\"'value'\">"
+        },
+        {
+            "name": "default",
+            "category": "conditionals",
+            "description": "Default case inside a switch block",
+            "syntax": "<element default>"
+        },
+        {
+            "name": "each",
+            "category": "loops",
+            "description": "Simple loop — iterates over an array",
+            "syntax": "<element each=\"item in items\">",
+            "examples": [
+                {
+                    "html": "<ul>\n  <li each=\"todo in todos\" bind=\"todo.text\"></li>\n</ul>",
+                    "description": "Render a list of todos"
+                }
+            ]
+        },
+        {
+            "name": "foreach",
+            "category": "loops",
+            "description": "Extended loop with advanced features (template, filter, sort, limit, offset)",
+            "syntax": "<element foreach=\"item\" from=\"items\" template=\"tplId\">",
+            "examples": [
+                {
+                    "html": "<template id=\"user-card\">\n  <div class=\"card\">\n    <h3 bind=\"user.name\"></h3>\n  </div>\n</template>\n<div foreach=\"user\" from=\"users\" template=\"user-card\"></div>",
+                    "description": "Loop with external template"
+                }
+            ]
+        },
+        {
+            "name": "from",
+            "category": "loops",
+            "description": "Source array for foreach loop",
+            "syntax": "<element foreach=\"item\" from=\"arrayExpression\">"
+        },
+        {
+            "name": "template",
+            "category": "loops",
+            "description": "Template ID to clone for each iteration in foreach",
+            "syntax": "<element foreach=\"item\" from=\"items\" template=\"templateId\">"
+        },
+        {
+            "name": "index",
+            "category": "loops",
+            "description": "Variable name for the current index in foreach",
+            "syntax": "<element foreach=\"item\" from=\"items\" index=\"i\">"
+        },
+        {
+            "name": "key",
+            "category": "loops",
+            "description": "Unique key for efficient list diffing",
+            "syntax": "<element each=\"item in items\" key=\"item.id\">"
+        },
+        {
+            "name": "filter",
+            "category": "loops",
+            "description": "Filter expression for foreach — only render matching items",
+            "syntax": "<element foreach=\"item\" from=\"items\" filter=\"item.active\">"
+        },
+        {
+            "name": "sort",
+            "category": "loops",
+            "description": "Sort property for foreach",
+            "syntax": "<element foreach=\"item\" from=\"items\" sort=\"item.name\">"
+        },
+        {
+            "name": "limit",
+            "category": "loops",
+            "description": "Maximum number of items to render in foreach",
+            "syntax": "<element foreach=\"item\" from=\"items\" limit=\"10\">"
+        },
+        {
+            "name": "offset",
+            "category": "loops",
+            "description": "Number of items to skip in foreach",
+            "syntax": "<element foreach=\"item\" from=\"items\" offset=\"5\">"
+        },
+        {
+            "name": "on:*",
+            "category": "events",
+            "description": "Event handler — supports all DOM events plus lifecycle hooks",
+            "syntax": "<element on:event=\"expression\">",
+            "examples": [
+                {
+                    "html": "<button on:click=\"count++\">Click me</button>",
+                    "description": "Click handler"
+                },
+                {
+                    "html": "<form on:submit.prevent=\"handleSubmit()\">",
+                    "description": "Submit with preventDefault"
+                },
+                {
+                    "html": "<input on:keydown.enter=\"search()\">",
+                    "description": "Key modifier"
+                }
+            ],
+            "notes": "Modifiers: .prevent, .stop, .once, .self. Key modifiers: .enter, .escape, .tab, etc. Lifecycle: on:mounted, on:unmounted"
+        },
+        {
+            "name": "class-*",
+            "category": "styling",
+            "description": "Toggle a CSS class based on a condition",
+            "syntax": "<element class-className=\"condition\">",
+            "examples": [
+                {
+                    "html": "<div class-active=\"isActive\" class-disabled=\"!isEnabled\"></div>",
+                    "description": "Conditional CSS classes"
+                }
+            ]
+        },
+        {
+            "name": "class-map",
+            "category": "styling",
+            "description": "Apply multiple CSS classes from an object expression",
+            "syntax": "<element class-map=\"{ className: condition }\">"
+        },
+        {
+            "name": "style-*",
+            "category": "styling",
+            "description": "Set an inline style property",
+            "syntax": "<element style-property=\"expression\">",
+            "examples": [
+                {
+                    "html": "<div style-color=\"textColor\" style-font-size=\"fontSize + 'px'\"></div>",
+                    "description": "Dynamic inline styles"
+                }
+            ]
+        },
+        {
+            "name": "style-map",
+            "category": "styling",
+            "description": "Apply multiple inline styles from an object expression",
+            "syntax": "<element style-map=\"{ property: value }\">"
+        },
+        {
+            "name": "validate",
+            "category": "forms",
+            "description": "Enable validation on a form or field. Built-in validators: required, email, url, min, max, custom",
+            "syntax": "<form validate> or <input validate=\"email\">",
+            "examples": [
+                {
+                    "html": "<form validate state=\"{ email: '', password: '' }\">\n  <input model=\"email\" validate=\"required,email\" error-required=\"Email is required\">\n  <input model=\"password\" type=\"password\" validate=\"required\" error-required=\"Password is required\">\n  <button if=\"$form.valid\">Submit</button>\n  <p if=\"$form.firstError\" bind=\"$form.firstError\" class=\"error\"></p>\n</form>",
+                    "description": "Login form with validation"
+                }
+            ],
+            "notes": "$form context provides: valid, dirty, touched, errors, firstError, errorCount, fields, values, pending, reset()"
+        },
+        {
+            "name": "route",
+            "category": "routing",
+            "description": "Define a route or create a navigation link",
+            "syntax": "<a route=\"/path\"> or <template route=\"/path\">",
+            "examples": [
+                {
+                    "html": "<a route=\"/\">Home</a>\n<a route=\"/about\">About</a>",
+                    "description": "Navigation links"
+                },
+                {
+                    "html": "<template route=\"/users/:id\">\n  <div get=\"/users/{$route.params.id}\" as=\"user\">\n    <h1 bind=\"user.name\"></h1>\n  </div>\n</template>",
+                    "description": "Route with params"
+                }
+            ]
+        },
+        {
+            "name": "route-view",
+            "category": "routing",
+            "description": "Route outlet that renders the matched route template",
+            "syntax": "<main route-view>",
+            "examples": [
+                {
+                    "html": "<main route-view src=\"templates/\" route-index=\"landing\"></main>",
+                    "description": "File-based routing outlet"
+                }
+            ],
+            "notes": "src: directory for file-based routing. route-index: filename for root '/'. ext: file extension (default .tpl, fallback .html)"
+        },
+        {
+            "name": "guard",
+            "category": "routing",
+            "description": "Route guard — prevents navigation if condition is falsy",
+            "syntax": "<template route=\"/admin\" guard=\"isAuthenticated\">"
+        },
+        {
+            "name": "route-active",
+            "category": "routing",
+            "description": "CSS class added to active route links",
+            "syntax": "<a route=\"/path\" route-active=\"active-class\">"
+        },
+        {
+            "name": "lazy",
+            "category": "routing",
+            "description": "Control when route templates are fetched. 'ondemand': load on first visit. 'priority': load before everything else.",
+            "syntax": "<a route=\"/path\" lazy=\"ondemand\">"
+        },
+        {
+            "name": "animate",
+            "category": "animation",
+            "description": "Apply CSS animation on element entry",
+            "syntax": "<element animate=\"animationName\">"
+        },
+        {
+            "name": "animate-enter",
+            "category": "animation",
+            "description": "CSS animation for entering the DOM",
+            "syntax": "<element animate-enter=\"slideIn\">"
+        },
+        {
+            "name": "animate-leave",
+            "category": "animation",
+            "description": "CSS animation for leaving the DOM",
+            "syntax": "<element animate-leave=\"slideOut\">"
+        },
+        {
+            "name": "animate-duration",
+            "category": "animation",
+            "description": "Animation duration in milliseconds",
+            "syntax": "<element animate=\"fadeIn\" animate-duration=\"300\">"
+        },
+        {
+            "name": "animate-stagger",
+            "category": "animation",
+            "description": "Stagger delay between animated list items",
+            "syntax": "<element each=\"item in items\" animate=\"fadeIn\" animate-stagger=\"50\">"
+        },
+        {
+            "name": "transition",
+            "category": "animation",
+            "description": "Apply CSS transition class for route/conditional changes",
+            "syntax": "<element transition=\"fade\">"
+        },
+        {
+            "name": "drag",
+            "category": "dnd",
+            "description": "Make an element draggable",
+            "syntax": "<element drag>"
+        },
+        {
+            "name": "drag-type",
+            "category": "dnd",
+            "description": "Data type identifier for drag operations",
+            "syntax": "<element drag drag-type=\"task\">"
+        },
+        {
+            "name": "drag-effect",
+            "category": "dnd",
+            "description": "Allowed drag effect: move, copy, link, or all",
+            "syntax": "<element drag drag-effect=\"move\">"
+        },
+        {
+            "name": "drag-handle",
+            "category": "dnd",
+            "description": "CSS selector to restrict drag initiation to a handle element",
+            "syntax": "<element drag drag-handle=\".handle\">"
+        },
+        {
+            "name": "drag-disabled",
+            "category": "dnd",
+            "description": "Disable drag conditionally",
+            "syntax": "<element drag drag-disabled=\"isLocked\">"
+        },
+        {
+            "name": "drag-class",
+            "category": "dnd",
+            "description": "CSS class added to source element while dragging",
+            "syntax": "<element drag drag-class=\"dragging\">"
+        },
+        {
+            "name": "drag-group",
+            "category": "dnd",
+            "description": "Scope drag to a named group",
+            "syntax": "<element drag drag-group=\"board\">"
+        },
+        {
+            "name": "drop",
+            "category": "dnd",
+            "description": "Make an element a drop zone",
+            "syntax": "<element drop>"
+        },
+        {
+            "name": "drop-accept",
+            "category": "dnd",
+            "description": "Restrict which drag types are accepted",
+            "syntax": "<element drop drop-accept=\"task\">"
+        },
+        {
+            "name": "drop-effect",
+            "category": "dnd",
+            "description": "Visual feedback effect on drop zone",
+            "syntax": "<element drop drop-effect=\"move\">"
+        },
+        {
+            "name": "drop-class",
+            "category": "dnd",
+            "description": "CSS class added to drop zone on valid drag-over",
+            "syntax": "<element drop drop-class=\"over\">"
+        },
+        {
+            "name": "drop-disabled",
+            "category": "dnd",
+            "description": "Disable drop conditionally",
+            "syntax": "<element drop drop-disabled=\"isFull\">"
+        },
+        {
+            "name": "drop-max",
+            "category": "dnd",
+            "description": "Maximum number of items in drop zone",
+            "syntax": "<element drop drop-max=\"5\">"
+        },
+        {
+            "name": "drop-sort",
+            "category": "dnd",
+            "description": "Enable positional sorting within drop zone",
+            "syntax": "<element drop drop-sort>"
+        },
+        {
+            "name": "drag-list",
+            "category": "dnd",
+            "description": "Create a sortable list bound to a state array",
+            "syntax": "<element drag-list=\"items\" drag-list-key=\"id\" drag-list-item=\"item\">",
+            "examples": [
+                {
+                    "html": "<div state=\"{ tasks: [{id:1,text:'A'},{id:2,text:'B'}] }\">\n  <div drag-list=\"tasks\" drag-list-key=\"id\" drag-list-item=\"task\">\n    <template>\n      <div class=\"task\" bind=\"task.text\"></div>\n    </template>\n  </div>\n</div>",
+                    "description": "Sortable task list"
+                }
+            ]
+        },
+        {
+            "name": "drag-multiple",
+            "category": "dnd",
+            "description": "Enable lasso/multi-select on children",
+            "syntax": "<element drag-list=\"items\" drag-multiple>"
+        },
+        {
+            "name": "t",
+            "category": "i18n",
+            "description": "Translate element content using an i18n key",
+            "syntax": "<element t=\"namespace.key\">",
+            "examples": [
+                {
+                    "html": "<h1 t=\"landing.hero.title\"></h1>",
+                    "description": "Translate heading"
+                }
+            ]
+        },
+        {
+            "name": "t-*",
+            "category": "i18n",
+            "description": "Pass parameters to translation strings",
+            "syntax": "<element t=\"greeting\" t-name=\"user.name\">"
+        },
+        {
+            "name": "ref",
+            "category": "refs",
+            "description": "Named element reference accessible from context",
+            "syntax": "<element ref=\"name\">",
+            "examples": [
+                {
+                    "html": "<input ref=\"searchInput\">\n<button on:click=\"$refs.searchInput.focus()\">Focus</button>",
+                    "description": "Focus input via ref"
+                }
+            ]
+        },
+        {
+            "name": "call",
+            "category": "misc",
+            "description": "Trigger an API call on click, with loading/error/success templates",
+            "syntax": "<button call=\"/api/action\" method=\"post\">",
+            "examples": [
+                {
+                    "html": "<button call=\"/api/publish\" method=\"post\" loading=\"#spinner\" redirect=\"/dashboard\">Publish</button>",
+                    "description": "API call with loading state and redirect"
+                }
+            ],
+            "notes": "Supports: method, body, headers, loading, error, success, redirect, confirm, as. AbortController switchMap on re-click."
+        },
+        {
+            "name": "trigger",
+            "category": "misc",
+            "description": "Emit a custom event from the element",
+            "syntax": "<element trigger=\"event-name\">"
+        },
+        {
+            "name": "use",
+            "category": "refs",
+            "description": "Instantiate a template inline",
+            "syntax": "<element use=\"templateId\">"
+        },
+        {
+            "name": "include",
+            "category": "refs",
+            "description": "Synchronously clone an inline template into the current position",
+            "syntax": "<template include=\"#fragment\">"
+        },
+        {
+            "name": "error-boundary",
+            "category": "misc",
+            "description": "Error boundary — renders fallback template on error",
+            "syntax": "<element error-boundary=\"#fallback\">"
+        }
+    ]
+}
