@@ -697,6 +697,18 @@
             "syntax": "<element t=\"greeting\" t-name=\"user.name\">"
         },
         {
+            "name": "t-html",
+            "category": "i18n",
+            "description": "Render translation value as sanitized HTML instead of plain text. Companion to `t`.",
+            "syntax": "<element t=\"key\" t-html>",
+            "examples": [
+                {
+                    "html": "<div t=\"legal.notice\" t-html></div>",
+                    "description": "Render translation as sanitized HTML"
+                }
+            ]
+        },
+        {
             "name": "ref",
             "category": "refs",
             "description": "Named element reference accessible from context",

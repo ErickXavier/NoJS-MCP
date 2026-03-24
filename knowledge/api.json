@@ -97,7 +97,8 @@
         "version": {
             "description": "Current NoJS version",
             "syntax": "NoJS.version",
-            "value": "1.10.0"
+            "value": "1.10.0",
+            "note": "In template expressions, use window.NoJS.version (NoJS is not on the expression evaluator's allow-list)"
         }
     },
     "utilities": {

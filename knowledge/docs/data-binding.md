@@ -21,7 +21,7 @@ Renders evaluated expression as HTML. Sanitized by default.
 <div bind-html="`<em>${user.bio}</em>`"></div>
 ```
 
-> ⚠️ Uses DOMPurify-compatible sanitization to prevent XSS.
+> ⚠️ Uses a built-in DOMParser-based structural sanitizer to prevent XSS.
 
 ---
 

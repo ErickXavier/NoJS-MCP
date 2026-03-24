@@ -104,7 +104,7 @@ export function registerTools(server: McpServer): void {
             // Check bind-html without sanitization warning
             if (html.includes("bind-html=")) {
                 warnings.push(
-                    `"bind-html" renders raw HTML. Ensure the content is sanitized to prevent XSS.`
+                    `"bind-html" renders HTML (sanitized by default via the built-in DOMParser-based sanitizer). Review content sources to prevent XSS.`
                 );
             }
 

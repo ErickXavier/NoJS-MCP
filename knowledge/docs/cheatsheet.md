@@ -165,6 +165,7 @@ Complete reference of every No.JS directive.
 |-----------|---------|-------------|
 | `t` | `t="greeting"` | Translate key |
 | `t-*` | `t-name="user.name"` | Translation param |
+| `t-html` | `t="key" t-html` | Render translation as sanitized HTML |
 
 ## Misc
 

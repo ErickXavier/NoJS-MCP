@@ -117,8 +117,8 @@ If a store name already exists, `config()` will **not** overwrite it. This means
 ### XSS Protection
 
 - `bind` always sets `textContent`, never `innerHTML` — safe by default.
-- `bind-html` sanitizes content through a DOMPurify-compatible sanitizer.
-- Template expressions are evaluated by a custom sandboxed parser — no `eval()` or `Function()` is used, and dangerous properties like `__proto__` and `constructor` are blocked.
+- `bind-html` sanitizes content through a built-in DOMParser-based structural sanitizer.
+- Template expressions are evaluated by a custom sandboxed parser — no `eval()` or `Function()` is used. The evaluator uses an allow-list approach: `_SAFE_GLOBALS` exposes JS built-ins (Math, Date, Object, Array, etc.) and `_BROWSER_GLOBALS` exposes curated browser APIs (document, console, navigator, etc.). Notably, `fetch`, `XMLHttpRequest`, `localStorage`, `sessionStorage`, `WebSocket`, and `indexedDB` are NOT on the allow-list. Spread operations filter `_FORBIDDEN_PROPS` (`__proto__`, `constructor`, `prototype`) to prevent prototype pollution.
 
 ### CSRF Protection
 
