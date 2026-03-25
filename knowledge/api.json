@@ -1,9 +1,8 @@
 {
-    "version": "1.10.0",
+    "version": "1.10.1",
     "name": "No.JS",
     "tagline": "The HTML-First Reactive Framework",
     "description": "Build dynamic, reactive web applications using nothing but HTML attributes. No build step. No virtual DOM. No transpiler. No JSX. Just HTML.",
-    "size": "~24 KB gzipped",
     "dependencies": "Zero",
     "cdn": "https://cdn.no-js.dev/",
     "github": "https://github.com/ErickXavier/no-js",
@@ -31,7 +30,7 @@
         "init": {
             "description": "Initialize NoJS on a root element",
             "syntax": "NoJS.init(root?)",
-            "notes": "Called automatically by CDN script. Only needed for npm/ESM usage."
+            "notes": "Called automatically by CDN script. Only needed for npm/ESM usage. Returns a Promise that resolves when initialization is complete (including plugin init hooks). Fires plugins:ready event."
         },
         "directive": {
             "description": "Register a custom directive",
@@ -67,9 +66,42 @@
             "notes": "Returns an unsubscribe function"
         },
         "interceptor": {
-            "description": "Register request/response interceptors for fetch directives",
+            "description": "Register request/response interceptors for fetch directives. Supports async functions. When registered inside a plugin, interceptors are tagged with the plugin name and receive redacted responses (sensitive headers/URLs stripped) unless the plugin is trusted.",
             "syntax": "NoJS.interceptor(type, fn)",
-            "example": "NoJS.interceptor('request', (url, opts) => {\n  opts.headers['Authorization'] = 'Bearer ' + token;\n  return [url, opts];\n});"
+            "example": "NoJS.interceptor('request', (url, opts) => {\n  opts.headers['Authorization'] = 'Bearer ' + token;\n  return opts;\n});",
+            "notes": "Request interceptors can return sentinel objects: { [NoJS.CANCEL]: true } to abort, { [NoJS.RESPOND]: data } to short-circuit. Response interceptors can return { [NoJS.REPLACE]: data } to replace response data. Each interceptor has a 5-second timeout."
+        },
+        "use": {
+            "description": "Register a plugin with the framework",
+            "syntax": "NoJS.use(plugin, options?)",
+            "example": "NoJS.use({\n  name: 'auth',\n  install(NoJS, options) {\n    NoJS.interceptor('request', (url, opts) => {\n      opts.headers['Authorization'] = 'Bearer ' + token;\n      return opts;\n    });\n  }\n});",
+            "notes": "Plugin object: { name, version?, capabilities?, install(NoJS, options), init?(NoJS), dispose?(NoJS) }. Named functions accepted as shorthand. Duplicate names rejected. Options: { trusted: true } grants unredacted header access."
+        },
+        "global": {
+            "description": "Register a reactive global variable accessible as $name in all expressions",
+            "syntax": "NoJS.global(name, value)",
+            "example": "NoJS.global('apiVersion', '2.1');\n// Use in HTML: <span bind=\"$apiVersion\"></span>",
+            "notes": "Name must start with a letter, contain only [a-zA-Z0-9_]. Reserved names (store, route, router, etc.) are rejected. Functions, eval, and Function references are rejected. Objects are sanitized (prototype keys stripped)."
+        },
+        "dispose": {
+            "description": "Tear down the entire NoJS instance",
+            "syntax": "await NoJS.dispose()",
+            "notes": "Disposes plugins in reverse order (3s timeout each), clears interceptors, globals, stores, event bus, and router. Returns a Promise. After dispose, NoJS.init() can be called again."
+        },
+        "CANCEL": {
+            "description": "Read-only Symbol sentinel for request interceptors — cancels the request",
+            "syntax": "return { [NoJS.CANCEL]: true }",
+            "notes": "Throws a DOMException with name 'AbortError'. Handled by the error template if present."
+        },
+        "RESPOND": {
+            "description": "Read-only Symbol sentinel for request interceptors — short-circuits with mock data",
+            "syntax": "return { [NoJS.RESPOND]: mockData }",
+            "notes": "The value becomes the parsed response data, bypassing the network request."
+        },
+        "REPLACE": {
+            "description": "Read-only Symbol sentinel for response interceptors — replaces response data",
+            "syntax": "return { [NoJS.REPLACE]: transformedData }",
+            "notes": "The value replaces the entire response data."
         },
         "store": {
             "description": "Access global stores",
@@ -97,7 +129,7 @@
         "version": {
             "description": "Current NoJS version",
             "syntax": "NoJS.version",
-            "value": "1.10.0",
+            "value": "1.10.1",
             "note": "In template expressions, use window.NoJS.version (NoJS is not on the expression evaluator's allow-list)"
         }
     },

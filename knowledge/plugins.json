@@ -1,0 +1,179 @@
+{
+    "version": "1.10.1",
+    "categories": [
+        {
+            "id": "registration",
+            "name": "Plugin Registration",
+            "description": "Registering and configuring plugins"
+        },
+        {
+            "id": "lifecycle",
+            "name": "Plugin Lifecycle",
+            "description": "Installation, initialization, and disposal hooks"
+        },
+        {
+            "id": "globals",
+            "name": "Reactive Globals",
+            "description": "Injecting reactive variables accessible in all expressions"
+        },
+        {
+            "id": "sentinels",
+            "name": "Interceptor Sentinels",
+            "description": "Symbol-based fetch pipeline control"
+        },
+        {
+            "id": "security",
+            "name": "Plugin Security",
+            "description": "Trusted access, header redaction, and safety checks"
+        }
+    ],
+    "entries": [
+        {
+            "name": "NoJS.use()",
+            "category": "registration",
+            "description": "Register a plugin with the framework. Accepts a plugin object or a named function.",
+            "syntax": "NoJS.use(plugin, options?)",
+            "parameters": {
+                "plugin": "object | function — Plugin object { name, install, init?, dispose? } or named function",
+                "options": "object — Optional config passed to install(). Special key: { trusted: true } for unredacted header access"
+            },
+            "example": "NoJS.use({\n  name: 'auth',\n  install(app, options) {\n    app.interceptor('request', (url, opts) => {\n      opts.headers['Authorization'] = 'Bearer ' + token;\n      return opts;\n    });\n  }\n});",
+            "notes": "Duplicate names rejected. Function shorthand: named functions only (arrow/anonymous rejected). Cannot install during dispose()."
+        },
+        {
+            "name": "Plugin Object Interface",
+            "category": "registration",
+            "description": "The standard plugin object shape with all available properties.",
+            "syntax": "{ name, version?, capabilities?, install, init?, dispose? }",
+            "parameters": {
+                "name": "string — Required, unique identifier",
+                "version": "string — Optional semver for debugging",
+                "capabilities": "string[] — Optional: 'directives', 'filters', 'validators', 'interceptors', 'globals', 'events', 'config', 'stores'",
+                "install": "function(app, options) — Required, called synchronously by use()",
+                "init": "function(app) — Optional, called after NoJS.init() completes (async allowed)",
+                "dispose": "function(app) — Optional, called during NoJS.dispose() (async allowed, 3s timeout)"
+            },
+            "example": "const myPlugin = {\n  name: 'analytics',\n  version: '1.0.0',\n  capabilities: ['interceptors', 'globals'],\n  install(app, options) { /* sync setup */ },\n  init(app) { /* DOM ready, async OK */ },\n  dispose(app) { /* cleanup, async OK */ }\n};"
+        },
+        {
+            "name": "Function Shorthand",
+            "category": "registration",
+            "description": "Register a plugin using a named function instead of an object. The function name becomes the plugin name.",
+            "syntax": "NoJS.use(function pluginName(app, options) { ... })",
+            "example": "function myLogger(app, options) {\n  app.interceptor('request', (url, opts) => {\n    console.log(`[${options.prefix}]`, url);\n    return opts;\n  });\n}\n\nNoJS.use(myLogger, { prefix: 'API' });",
+            "notes": "Arrow functions and anonymous functions are rejected. The function must have a non-empty, non-'anonymous' name."
+        },
+        {
+            "name": "install(app, options)",
+            "category": "lifecycle",
+            "description": "Called synchronously during NoJS.use(). Register interceptors, globals, directives, filters, validators, events, and stores here.",
+            "syntax": "install(app, options) { ... }",
+            "notes": "The app parameter is the NoJS object. Options come from the second argument to NoJS.use(). Must be synchronous."
+        },
+        {
+            "name": "init(app)",
+            "category": "lifecycle",
+            "description": "Called after NoJS.init() completes. DOM is processed, router is active, stores are available. Can be async.",
+            "syntax": "init(app) { ... }",
+            "notes": "If NoJS.init() already completed when the plugin is installed, init runs immediately (awaited). All init hooks run in installation order. The 'plugins:ready' event is emitted after all init hooks complete."
+        },
+        {
+            "name": "dispose(app)",
+            "category": "lifecycle",
+            "description": "Called during NoJS.dispose() for cleanup. Close connections, clear intervals, flush pending work. Can be async.",
+            "syntax": "dispose(app) { ... }",
+            "notes": "Has a 3-second timeout. Plugins are disposed in REVERSE installation order. After all plugins dispose, globals and interceptors are cleared."
+        },
+        {
+            "name": "plugins:ready Event",
+            "category": "lifecycle",
+            "description": "Global event emitted after all plugin init() hooks complete during NoJS.init().",
+            "syntax": "NoJS.on('plugins:ready', () => { ... })",
+            "example": "NoJS.on('plugins:ready', () => {\n  console.log('All plugins initialized');\n});"
+        },
+        {
+            "name": "NoJS.global()",
+            "category": "globals",
+            "description": "Inject a reactive global variable accessible as $name in all template expressions.",
+            "syntax": "NoJS.global(name, value)",
+            "parameters": {
+                "name": "string — Variable name without $ prefix. Must be valid JS identifier. Reserved names blocked.",
+                "value": "any — The value to expose. Objects auto-wrapped in reactive context. eval/Function rejected."
+            },
+            "example": "NoJS.global('theme', { mode: 'dark', accent: 'blue' });\n// In HTML: <span bind=\"$theme.mode\"></span>",
+            "notes": "Reserved names: store, route, router, i18n, refs, form, parent, watch, set, notify, raw, isProxy, listeners, app, config, env, debug, version, plugins, globals, el, event, self, this, super, window, document, toString, valueOf, hasOwnProperty. Prototype pollution keys (__proto__, constructor, prototype) also blocked."
+        },
+        {
+            "name": "Global Reactivity",
+            "category": "globals",
+            "description": "Object values passed to NoJS.global() are automatically wrapped in a reactive context. Mutations trigger DOM updates.",
+            "example": "NoJS.global('user', { name: 'Guest' });\n// <span bind=\"$user.name\"></span> updates when $user.name changes",
+            "notes": "Objects are JSON-round-tripped to strip __proto__ keys, then wrapped in createContext(). Non-serializable objects are deep-checked for dangerous references."
+        },
+        {
+            "name": "Global Ownership Tracking",
+            "category": "globals",
+            "description": "Globals registered during plugin install() are tagged with the plugin name. Overwrites by different plugins trigger a warning.",
+            "example": "// Plugin A registers $theme\n// Plugin B tries to overwrite $theme\n// Warning: Global \"$theme\" owned by \"pluginA\" is being overwritten."
+        },
+        {
+            "name": "NoJS.CANCEL",
+            "category": "sentinels",
+            "description": "Read-only Symbol sentinel. Return { [NoJS.CANCEL]: true } from a request interceptor to abort the request.",
+            "syntax": "return { [NoJS.CANCEL]: true }",
+            "example": "app.interceptor('request', (url, opts) => {\n  if (!navigator.onLine) {\n    return { [app.CANCEL]: true };\n  }\n  return opts;\n});",
+            "notes": "Throws a DOMException with name 'AbortError'. Handled by the error template if present."
+        },
+        {
+            "name": "NoJS.RESPOND",
+            "category": "sentinels",
+            "description": "Read-only Symbol sentinel. Return { [NoJS.RESPOND]: data } from a request interceptor to skip the HTTP call and use data directly.",
+            "syntax": "return { [NoJS.RESPOND]: mockData }",
+            "example": "app.interceptor('request', (url, opts) => {\n  if (cache.has(url)) {\n    return { [app.RESPOND]: cache.get(url) };\n  }\n  return opts;\n});",
+            "notes": "The value becomes the parsed response data, bypassing the network request entirely."
+        },
+        {
+            "name": "NoJS.REPLACE",
+            "category": "sentinels",
+            "description": "Read-only Symbol sentinel. Return { [NoJS.REPLACE]: data } from a response interceptor to replace the parsed response body.",
+            "syntax": "return { [NoJS.REPLACE]: transformedData }",
+            "example": "app.interceptor('response', (response, url) => {\n  if (url.includes('/users')) {\n    return { [app.REPLACE]: { normalized: true } };\n  }\n  return response;\n});",
+            "notes": "The value replaces the entire parsed response data."
+        },
+        {
+            "name": "Trusted Interceptors",
+            "category": "security",
+            "description": "Plugins installed with { trusted: true } receive unredacted HTTP headers and URLs in their interceptors. By default, sensitive headers are stripped.",
+            "syntax": "NoJS.use(plugin, { trusted: true })",
+            "example": "NoJS.use(authPlugin, { trusted: true });",
+            "notes": "A console warning is logged when trusted access is granted. Redacted request headers: authorization, x-api-key, x-auth-token, cookie, proxy-authorization, set-cookie, x-csrf-token. Redacted response headers: set-cookie, x-csrf-token, x-auth-token, www-authenticate, proxy-authenticate. Headers matching the pattern x-auth-* or x-api-* are also redacted."
+        },
+        {
+            "name": "Directive Registry Freezing",
+            "category": "security",
+            "description": "Core directives are frozen after framework load. Plugins can register new directives but cannot override built-in ones.",
+            "example": "app.directive('chart', { priority: 25, init(el, name, value) { /* OK */ } });\napp.directive('bind', { /* ... */ }); // Warning: cannot override core directive",
+            "notes": "Frozen directives: state, store, bind, bind-html, model, if, else-if, else, each, foreach, get, post, put, patch, delete, on:*, show, hide, switch, case, class-*, style-*, t, validate, ref, use, drag, drop, animate, route, route-view, computed, watch, call, trigger, error-boundary, i18n-ns, drag-list, drag-multiple."
+        },
+        {
+            "name": "NoJS.dispose()",
+            "category": "lifecycle",
+            "description": "Tear down the entire app: dispose all plugins in reverse order, clear globals, interceptors, and reset init state.",
+            "syntax": "await NoJS.dispose()",
+            "notes": "Returns a Promise. Each plugin dispose has a 3-second timeout. After disposal, NoJS.init() can be called again. Calls to NoJS.use() during dispose are ignored with a warning."
+        },
+        {
+            "name": "Prototype Pollution Protection",
+            "category": "security",
+            "description": "NoJS.global() blocks __proto__, constructor, and prototype as global names. Object values are sanitized to strip prototype keys.",
+            "notes": "Objects are JSON.parse(JSON.stringify())-ed to remove __proto__ keys. Non-serializable objects are deep-checked for eval/Function references."
+        },
+        {
+            "name": "Dangerous Function Blocking",
+            "category": "security",
+            "description": "eval and Function references are rejected in NoJS.global() values, even when nested inside objects.",
+            "example": "NoJS.global('run', eval);                    // Rejected\nNoJS.global('tools', { exec: Function });    // Rejected\nNoJS.global('deep', { a: { fn: eval } });    // Rejected",
+            "notes": "Applies to both direct assignment and deeply nested references."
+        }
+    ]
+}
