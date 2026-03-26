@@ -17,12 +17,25 @@
                 "baseApiUrl": "string — default API base URL",
                 "router": {
                     "useHash": "boolean — use hash-based routing (default: false)",
-                    "base": "string — base path for the app"
+                    "base": "string — base path for the app (default: '/')",
+                    "scrollBehavior": "string — scroll on navigate: 'top' (default), 'smooth', or 'preserve'",
+                    "templates": "string — directory for file-based route templates (default: 'pages')",
+                    "ext": "string — file extension for auto-resolved route templates (default: '.tpl')",
+                    "focusBehavior": "string — 'none' (default) or 'auto' — moves focus to new content after SPA navigation for accessible navigation"
                 },
                 "headers": "object — default request headers",
-                "csrf": "object — CSRF token configuration",
-                "cache": "object — cache settings",
-                "templates": "object — template loading settings",
+                "timeout": "number — request timeout in milliseconds (default: 10000)",
+                "retries": "number — automatic retries on failed requests (default: 0)",
+                "retryDelay": "number — delay between retries in ms (default: 1000)",
+                "credentials": "string — fetch credentials mode: 'same-origin' (default), 'include', 'omit'",
+                "csrf": "object — CSRF token configuration ({ token, header })",
+                "cache": "object — cache settings ({ strategy: 'none'|'memory'|'local'|'session', ttl: 300000 })",
+                "templates": "object — template loading settings ({ cache: true })",
+                "sanitize": "boolean — sanitize HTML in bind-html (default: true)",
+                "dangerouslyDisableSanitize": "boolean — explicit opt-out of HTML sanitization (default: false)",
+                "exprCacheSize": "number — maximum expression cache entries using LRU eviction (default: 500)",
+                "maxEventListeners": "number — maximum event listeners per element (default: 100)",
+                "devtools": "boolean — enable browser devtools panel (default: false)",
                 "stores": "object — define global stores at config time",
                 "i18n": "object — i18n settings (see NoJS.i18n())"
             }

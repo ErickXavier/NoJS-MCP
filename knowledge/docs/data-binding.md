@@ -23,6 +23,8 @@ Renders evaluated expression as HTML. Sanitized by default.
 
 > ⚠️ Uses a built-in DOMParser-based structural sanitizer to prevent XSS.
 
+> **Debug warning:** In `debug` or `devtools` mode, `bind-html` with a dynamic expression (not starting with a quote) logs a security warning reminding you to ensure the value is trusted or sanitized.
+
 ---
 
 ## `bind-*` — Attribute Binding

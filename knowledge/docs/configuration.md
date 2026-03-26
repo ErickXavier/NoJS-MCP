@@ -36,7 +36,8 @@
       base: '/',
       scrollBehavior: 'top',  // 'top' | 'preserve' | 'smooth'
       templates: 'pages',       // Default base path for file-based routing (default: 'pages')
-      ext: '.tpl'              // Default file extension for file-based routing (fallback: '.html')
+      ext: '.tpl',             // Default file extension for file-based routing (fallback: '.html')
+      focusBehavior: 'none'  // 'none' (default) or 'auto' — moves focus to new content after navigation for accessible SPA
     },
     // Note: Anchor links (href="#id") are automatically
     // intercepted in both modes — they scroll to the target
@@ -57,7 +58,12 @@
     devtools: true,            // Enables browser devtools panel
 
     // Security
-    sanitize: true,            // Sanitize bind-html
+    sanitize: true,            // Sanitize bind-html (default: true)
+    dangerouslyDisableSanitize: false,  // Explicit opt-out of HTML sanitization (use with caution)
+
+    // Performance
+    exprCacheSize: 500,        // Max expression cache entries; LRU eviction (default: 500)
+    maxEventListeners: 100,    // Max event listeners per element (default: 100)
   });
 </script>
 ```

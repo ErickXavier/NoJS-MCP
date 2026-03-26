@@ -1,5 +1,5 @@
 {
-    "version": "1.10.0",
+    "version": "1.10.1",
     "categories": [
         {
             "id": "data",
@@ -65,6 +65,11 @@
             "id": "refs",
             "name": "Refs & Templates",
             "description": "Element references and template instantiation"
+        },
+        {
+            "id": "head",
+            "name": "Head Management",
+            "description": "Reactive document head directives (title, meta, canonical, JSON-LD)"
         },
         {
             "id": "misc",
@@ -750,6 +755,62 @@
             "category": "refs",
             "description": "Synchronously clone an inline template into the current position",
             "syntax": "<template include=\"#fragment\">"
+        },
+        {
+            "name": "page-title",
+            "category": "head",
+            "description": "Reactively set the document <title>. Place on a <div hidden> host element.",
+            "syntax": "<div hidden page-title=\"expression\">",
+            "examples": [
+                {
+                    "html": "<div hidden page-title=\"product.name + ' | My Store'\"></div>",
+                    "description": "Dynamic page title from reactive state"
+                },
+                {
+                    "html": "<div hidden page-title=\"'About Us | My Store'\"></div>",
+                    "description": "Static page title"
+                }
+            ],
+            "notes": "Watches the expression and updates <title> whenever the reactive context changes. Priority 1."
+        },
+        {
+            "name": "page-description",
+            "category": "head",
+            "description": "Reactively set <meta name=\"description\"> in <head>. Creates the tag if absent.",
+            "syntax": "<div hidden page-description=\"expression\">",
+            "examples": [
+                {
+                    "html": "<div hidden page-description=\"product.description\"></div>",
+                    "description": "Dynamic meta description from product data"
+                }
+            ],
+            "notes": "Watches the expression and updates the meta content whenever the reactive context changes. Priority 1."
+        },
+        {
+            "name": "page-canonical",
+            "category": "head",
+            "description": "Reactively set <link rel=\"canonical\"> in <head>. Creates the tag if absent.",
+            "syntax": "<div hidden page-canonical=\"expression\">",
+            "examples": [
+                {
+                    "html": "<div hidden page-canonical=\"'/products/' + product.slug\"></div>",
+                    "description": "Dynamic canonical URL from product slug"
+                }
+            ],
+            "notes": "Watches the expression and updates the canonical href whenever the reactive context changes. Priority 1."
+        },
+        {
+            "name": "page-jsonld",
+            "category": "head",
+            "description": "Reactively set <script type=\"application/ld+json\" data-nojs> in <head>. Value is an expression evaluating to an object (JSON.stringify applied) or a JSON string with {interpolation} placeholders.",
+            "syntax": "<div hidden page-jsonld>{ \"@type\": \"Product\", \"name\": \"{product.name}\" }</div>",
+            "examples": [
+                {
+                    "html": "<div hidden page-jsonld>\n  { \"@type\": \"Product\", \"name\": \"{product.name}\", \"price\": \"{product.price}\" }\n</div>",
+                    "description": "Structured data with interpolation"
+                }
+            ],
+            "notes": "The data-nojs marker distinguishes the managed tag from hand-written JSON-LD so they can coexist. Priority 1."
         },
         {
             "name": "error-boundary",

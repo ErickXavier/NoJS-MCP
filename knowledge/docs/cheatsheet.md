@@ -167,6 +167,17 @@ Complete reference of every No.JS directive.
 | `t-*` | `t-name="user.name"` | Translation param |
 | `t-html` | `t="key" t-html` | Render translation as sanitized HTML |
 
+## Head Management
+
+| Directive | Example | Description |
+|-----------|---------|-------------|
+| `page-title` | `page-title="product.name + ' \| Store'"` | Reactively set document title |
+| `page-description` | `page-description="product.description"` | Reactively set meta description |
+| `page-canonical` | `page-canonical="'/products/' + slug"` | Reactively set canonical URL |
+| `page-jsonld` | `<div hidden page-jsonld>{ "@type": "Product" }</div>` | Reactively set JSON-LD structured data |
+
+> Place head management directives on `<div hidden>` elements. Priority 1.
+
 ## Misc
 
 | Directive | Example | Description |

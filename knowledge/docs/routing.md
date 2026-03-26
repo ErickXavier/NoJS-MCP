@@ -236,6 +236,29 @@ This replaces the need to add `i18n-ns="..."` on each route template individuall
 
 ---
 
+## Accessible Navigation — `focusBehavior`
+
+For accessible SPA navigation, set `focusBehavior` to `"auto"` in the router config. After each navigation on the default outlet, No.JS moves focus to the first suitable element inside the outlet:
+
+1. An element with `[autofocus]`
+2. An element with `[tabindex="-1"]`
+3. The first `<h1>`
+4. The outlet element itself
+
+If the chosen element has no `tabindex`, `-1` is added automatically. Focus is set with `{ preventScroll: true }` after `requestAnimationFrame` to ensure the content is painted.
+
+```html
+<script>
+  NoJS.config({
+    router: { focusBehavior: 'auto' }
+  });
+</script>
+```
+
+> **Default:** `"none"` — no focus management. Set to `"auto"` only on the default outlet; named outlets are not affected.
+
+---
+
 ## Lazy Template Loading
 
 Route templates support a `lazy` attribute to control when their remote file is fetched:
