@@ -36,6 +36,7 @@
                 "exprCacheSize": "number — maximum expression cache entries using LRU eviction (default: 500)",
                 "maxEventListeners": "number — maximum event listeners per element (default: 100)",
                 "devtools": "boolean — enable browser devtools panel (default: false)",
+                "sanitizeHtml": "function|null — custom HTML sanitizer function, overrides built-in DOMParser-based sanitizer (default: null)",
                 "stores": "object — define global stores at config time",
                 "i18n": "object — i18n settings (see NoJS.i18n())"
             }
