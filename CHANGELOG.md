@@ -5,6 +5,18 @@ All notable changes to the **NoJS MCP** server will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0](https://github.com/ErickXavier/nojs-mcp/compare/v1.10.1...v1.11.0) — 2026-03-26
+
+### Added
+
+- Plugin knowledge base and documentation for the plugin system ([`5f2bb60`](https://github.com/ErickXavier/nojs-mcp/commit/5f2bb60))
+- Head management directives (`page-title`, `page-description`, `page-canonical`, `page-jsonld`) in tool definitions ([`a083ad1`](https://github.com/ErickXavier/nojs-mcp/commit/a083ad1))
+- `focusBehavior` config option and `bind-html` warning documentation ([`a083ad1`](https://github.com/ErickXavier/nojs-mcp/commit/a083ad1))
+
+### Fixed
+
+- Add missing `sanitizeHtml` config option to `api.json` ([`6b0b3f9`](https://github.com/ErickXavier/nojs-mcp/commit/6b0b3f9))
+
 ## [1.10.1](https://github.com/ErickXavier/nojs-mcp/compare/v1.10.0...v1.10.1) — 2026-03-23
 
 ### Fixed

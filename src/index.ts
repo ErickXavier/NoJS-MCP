@@ -7,7 +7,7 @@ import { registerTools } from "./tools/index.js";
 
 const server = new McpServer({
     name: "nojs-mcp",
-    version: "1.10.1",
+    version: "1.11.0",
 });
 
 // Register all resources and tools

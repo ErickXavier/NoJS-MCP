@@ -1,6 +1,6 @@
 {
   "name": "@erickxavier/nojs-mcp",
-  "version": "1.10.1",
+  "version": "1.11.0",
   "description": "MCP server providing AI assistants with deep knowledge of the NoJS framework",
   "main": "dist/index.js",
   "bin": {
