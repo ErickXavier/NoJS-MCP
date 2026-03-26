@@ -7,8 +7,10 @@ MCP (Model Context Protocol) server that provides AI assistants with deep knowle
 This MCP server gives AI assistants (GitHub Copilot, Claude, Cursor, etc.) structured access to:
 
 - **80+ directives** with syntax, examples, and usage notes
+- **Head management directives** (`title`, `meta`, `link`, `script`, `base`) for declarative `<head>` control
+- **Plugin system** with lifecycle hooks, custom directives, and shared state
 - **32 built-in filters** (text, numbers, arrays, dates, utility)
-- **Full public API** reference (config, init, router, i18n, store, etc.)
+- **Full public API** reference (config, init, router, i18n, store, plugins, etc.)
 - **23 documentation pages** (getting started, routing, forms, drag-and-drop, etc.)
 - **Template validation** tool to catch NoJS syntax errors
 - **Component scaffolding** for common UI patterns
@@ -80,7 +82,7 @@ list_directives({ category: "data" })
 // → All data-fetching directives (get, post, put, patch, delete, etc.)
 ```
 
-**Categories:** `data`, `state`, `binding`, `conditionals`, `loops`, `events`, `styling`, `forms`, `routing`, `animation`, `dnd`, `i18n`, `refs`, `misc`
+**Categories:** `data`, `state`, `binding`, `conditionals`, `loops`, `events`, `styling`, `forms`, `routing`, `animation`, `dnd`, `i18n`, `refs`, `head`, `misc`
 
 ### `scaffold_component`
 Generate NoJS component templates.
@@ -110,13 +112,15 @@ node dist/index.js
 
 ## Versioning
 
-This package version always matches the No.JS framework version. Current: **1.10.0**
+This package version always matches the No.JS framework version. Current: **1.11.0**
 
-## Links
+## Ecosystem
 
-- [No.JS Framework](https://no-js.dev/)
-- [No.JS GitHub](https://github.com/ErickXavier/no-js)
-- [No.JS LSP](https://lsp.no-js.dev/)
+- [No.JS Framework](https://github.com/AeonJVS/NoJS) — The HTML-First Reactive Framework
+- [No.JS LSP](https://github.com/AeonJVS/NoJS-LSP) — Language Server Protocol support
+- [No.JS Skill](https://github.com/AeonJVS/NoJS-Skill) — AI Skill for code generation
+- [No.JS CLI](https://github.com/AeonJVS/NoJS-CLI) — Command-line scaffolding and tooling
+- [No.JS Website](https://no-js.dev/)
 - [NoJS Discord](https://discord.gg/CaSbGYg3xY)
 
 ## License
