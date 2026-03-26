@@ -76,3 +76,19 @@ export interface ApiKB {
     utilities: Record<string, string>;
     quickStart: string;
 }
+
+export interface PluginEntry {
+    name: string;
+    category: string;
+    description: string;
+    syntax?: string;
+    parameters?: Record<string, string>;
+    example?: string;
+    notes?: string;
+}
+
+export interface PluginsKB {
+    version: string;
+    categories: Array<{ id: string; name: string; description: string }>;
+    entries: PluginEntry[];
+}

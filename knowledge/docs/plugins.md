@@ -202,7 +202,7 @@ By default, plugin interceptors receive redacted headers. Auth plugins that need
 ## App Teardown
 
 ```html
-<script>
+<script type="module">
   await NoJS.dispose();
 </script>
 ```

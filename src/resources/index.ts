@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { loadJSON, loadDoc, listDocs } from "../knowledge.js";
-import type { DirectivesKB, FiltersKB, ApiKB } from "../knowledge.js";
+import type { DirectivesKB, FiltersKB, ApiKB, PluginsKB } from "../knowledge.js";
 
 export function registerResources(server: McpServer): void {
     // ── Documentation resources ──
@@ -85,6 +85,29 @@ export function registerResources(server: McpServer): void {
                 contents: [
                     {
                         uri: "nojs://ref/filters",
+                        mimeType: "application/json" as const,
+                        text: JSON.stringify(kb, null, 2),
+                    },
+                ],
+            };
+        }
+    );
+
+    // ── Plugins reference ──
+    server.resource(
+        "ref-plugins",
+        "nojs://ref/plugins",
+        {
+            description:
+                "NoJS plugin system reference: registration, lifecycle, globals, sentinels, and security",
+            mimeType: "application/json",
+        },
+        async () => {
+            const kb = loadJSON<PluginsKB>("plugins.json");
+            return {
+                contents: [
+                    {
+                        uri: "nojs://ref/plugins",
                         mimeType: "application/json" as const,
                         text: JSON.stringify(kb, null, 2),
                     },

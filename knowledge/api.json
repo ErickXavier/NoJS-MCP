@@ -74,8 +74,8 @@
         "use": {
             "description": "Register a plugin with the framework",
             "syntax": "NoJS.use(plugin, options?)",
-            "example": "NoJS.use({\n  name: 'auth',\n  install(NoJS, options) {\n    NoJS.interceptor('request', (url, opts) => {\n      opts.headers['Authorization'] = 'Bearer ' + token;\n      return opts;\n    });\n  }\n});",
-            "notes": "Plugin object: { name, version?, capabilities?, install(NoJS, options), init?(NoJS), dispose?(NoJS) }. Named functions accepted as shorthand. Duplicate names rejected. Options: { trusted: true } grants unredacted header access."
+            "example": "NoJS.use({\n  name: 'auth',\n  install(app, options) {\n    app.interceptor('request', (url, opts) => {\n      opts.headers['Authorization'] = 'Bearer ' + token;\n      return opts;\n    });\n  }\n});",
+            "notes": "Plugin object: { name, version?, capabilities?, install(app, options), init?(app), dispose?(app) }. Named functions accepted as shorthand. Duplicate names rejected. Options: { trusted: true } grants unredacted header access."
         },
         "global": {
             "description": "Register a reactive global variable accessible as $name in all expressions",
