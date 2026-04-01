@@ -147,6 +147,25 @@
             "note": "In template expressions, use window.NoJS.version (NoJS is not on the expression evaluator's allow-list)"
         }
     },
+    "_compiled": {
+            "description": "Internal array of pre-compiled expression functions. Populated by the compiler's injected <script id=\"__nojs_compiled\"> block at build time. Directive handlers check this array (via data-nojs-e indices) to skip runtime expression parsing.",
+            "syntax": "NoJS._compiled",
+            "type": "Array",
+            "notes": "Internal API — not for direct use. Populated by the CLI compiler (`nojs build`). Each entry is a function `(scope) => value` or `(scope) => { statements }`. The array is indexed by the integer values in the `data-nojs-e` attribute on compiled elements."
+        },
+        "_factories": {
+            "description": "Internal object of pre-compiled template factory functions. Populated by the compiler's injected <script id=\"__nojs_factories\"> block at build time. Enables zero-parse template instantiation.",
+            "syntax": "NoJS._factories",
+            "type": "Object",
+            "notes": "Internal API — not for direct use. Populated by the CLI compiler (`nojs build`). Keys are template IDs. Each factory contains pre-analyzed bindings so templates can be instantiated without re-parsing directives."
+        },
+        "_filters": {
+            "description": "Internal filters registry object. Maps filter names to their transform functions. Populated by NoJS.filter() calls and used by compiled pipe expressions (e.g., `NoJS._filters.currency(value)`).",
+            "syntax": "NoJS._filters",
+            "type": "Object",
+            "notes": "Internal API. The compiled code generator emits calls to `NoJS._filters.<name>(...)` for pipe expressions. Custom filters registered via `NoJS.filter(name, fn)` are stored here. This property is read-only (non-writable, non-configurable)."
+        }
+    },
     "utilities": {
         "createContext": "Create a reactive context manually",
         "evaluate": "Evaluate an expression string in a context",
