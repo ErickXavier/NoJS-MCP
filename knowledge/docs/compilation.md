@@ -145,3 +145,133 @@ These are **internal APIs** consumed by the framework's directive handlers. They
 | **CI/CD** | `nojs build` | Compile in-place as part of the build pipeline |
 
 The compiled output is **backward-compatible**. If the `data-nojs-e` attribute is present, the runtime uses the pre-compiled function; otherwise it falls back to runtime parsing. This means compiled and non-compiled pages can coexist.
+
+---
+
+## Static Site Generation (SSG)
+
+The v2 compiler pipeline includes a 3-level **Static Site Generation (SSG)** system that bakes compile-time-resolvable values directly into the HTML. This eliminates first-paint flicker and reduces the amount of JavaScript that runs on page load.
+
+SSG is **enabled by default** and runs at Level 3. It can be controlled via CLI flags or the `nojs.config.json` configuration file.
+
+### SSG Levels
+
+Each level is additive: Level 2 includes Level 1, Level 3 includes both.
+
+| Level | Name | What it does | Example |
+|-------|------|-------------|---------|
+| **1** | Constant Folding | Bakes literal values identified by the optimizer into HTML | `bind="'Hello'"` becomes `<span data-nojs-ssr="bind">Hello</span>` |
+| **2** | State Resolution | Evaluates expressions against known initial state at build time | `bind="count + 1"` with `state='{"count":0}'` becomes `<span data-nojs-ssr="bind">1</span>` |
+| **3** | Loop Unrolling | Expands static arrays into pre-rendered HTML children | `each="item in items"` with `state='{"items":["A","B","C"]}'` produces 3 `<li>` elements |
+
+### CLI Flags
+
+```bash
+# Default: SSG enabled at level 3
+nojs build
+
+# Disable SSG entirely
+nojs build --ssg false
+
+# Use only constant folding (level 1)
+nojs build --ssg-level 1
+
+# State resolution without loop unrolling (level 2)
+nojs build --ssg-level 2
+```
+
+### SSG in Configuration
+
+```json
+{
+  "compiler": {
+    "ssg": {
+      "enabled": true,
+      "level": 3,
+      "state_overrides": {
+        "theme": "dark",
+        "locale": "en"
+      }
+    }
+  }
+}
+```
+
+The `state_overrides` field lets you provide build-time values for state keys that should differ from their in-template defaults (e.g., setting a default theme for the initial render).
+
+### Hydration Markers
+
+When SSG bakes a value into HTML, it adds a `data-nojs-ssr` attribute to the affected element. This tells the runtime framework to **skip the initial render** for that element and instead attach only the reactive watcher.
+
+| Marker value | Applied when |
+|-------------|--------------|
+| `bind` | Text content or attribute binding was pre-rendered |
+| `class` | Class toggle was pre-applied |
+| `style` | Inline style was pre-set |
+| `show` | Display visibility was pre-set |
+| `loop` | Loop children were pre-rendered from a static array |
+| `if` | Conditional branch was pre-evaluated |
+
+After hydration, the directive removes the `data-nojs-ssr` attribute and attaches the reactive watcher, so subsequent state changes update the DOM normally.
+
+### Element References
+
+The compiler uses `data-nojs-ref="N"` attributes to identify directive-bearing elements. These are internal compiler attributes and are cleaned up by a small script injected at the end of the `<script>` block:
+
+```javascript
+document.querySelectorAll('[data-nojs-ref]')
+  .forEach(el => el.removeAttribute('data-nojs-ref'));
+```
+
+### Example: SSG Level 2
+
+**Before build:**
+
+```html
+<div state='{"name": "World", "count": 0}'>
+  <h1 bind="'Hello ' + name">Loading...</h1>
+  <span bind="count">0</span>
+</div>
+```
+
+**After `nojs build` (SSG level 2):**
+
+```html
+<div state='{"name": "World", "count": 0}'>
+  <h1 data-nojs-ssr="bind" data-nojs-ref="0">Hello World</h1>
+  <span data-nojs-ssr="bind" data-nojs-ref="1">0</span>
+</div>
+<script>
+// State declarations and update functions remain for reactivity,
+// but no create ops needed for pre-rendered bindings.
+let name = 'World';
+let count = 0;
+function _update_name() { ... }
+function _update_count() { ... }
+document.querySelectorAll('[data-nojs-ref]').forEach(el => el.removeAttribute('data-nojs-ref'));
+</script>
+```
+
+### Example: SSG Level 3 (Loop Unrolling)
+
+**Before build:**
+
+```html
+<div state='{"items": ["Alice", "Bob", "Charlie"]}'>
+  <ul each="item in items">
+    <li>${item}</li>
+  </ul>
+</div>
+```
+
+**After `nojs build` (SSG level 3):**
+
+```html
+<div state='{"items": ["Alice", "Bob", "Charlie"]}'>
+  <ul data-nojs-ssr="loop">
+    <li>Alice</li>
+    <li>Bob</li>
+    <li>Charlie</li>
+  </ul>
+</div>
+```
