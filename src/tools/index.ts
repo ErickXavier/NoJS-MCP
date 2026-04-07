@@ -237,7 +237,7 @@ export function registerTools(server: McpServer): void {
                 .string()
                 .optional()
                 .describe(
-                    'Filter by category: data, state, binding, conditionals, loops, events, styling, forms, routing, animation, dnd, i18n, refs, misc'
+                    'Filter by category: data, state, binding, conditionals, loops, events, styling, forms, routing, animation, dnd (plugin), modal (plugin), dropdown (plugin), tooltip (plugin), popover (plugin), toast (plugin), tabs (plugin), tree (plugin), stepper (plugin), skeleton (plugin), split (plugin), table (plugin), i18n, refs, head, misc'
                 ),
         },
         async ({ category }) => {
@@ -294,13 +294,13 @@ export function registerTools(server: McpServer): void {
         "Generate a NoJS component template following framework conventions",
         {
             type: z
-                .enum(["form", "list", "detail", "card", "modal", "nav"])
+                .enum(["form", "list", "detail", "card", "modal", "nav", "tabs", "dropdown", "stepper", "table", "tree", "split"])
                 .describe("Component type to scaffold"),
             features: z
                 .array(z.string())
                 .optional()
                 .describe(
-                    'Optional features to include: "validation", "i18n", "state", "fetch", "animation", "dnd"'
+                    'Optional features to include: "validation", "i18n", "state", "fetch", "animation", "dnd", "modal", "dropdown", "tooltip", "popover", "toast", "tabs", "tree", "stepper", "skeleton", "split", "table" (dnd and element features require nojs-elements plugin)'
                 ),
         },
         async ({ type, features = [] }) => {
@@ -381,6 +381,114 @@ export function registerTools(server: McpServer): void {
   </div>
 </div>`,
 
+                tabs: `<div tabs>
+  <button tab>Overview</button>
+  <button tab>Details</button>
+  <button tab>Settings</button>
+
+  <div panel>
+    <h2>Overview</h2>
+    <p>Overview content goes here.</p>
+  </div>
+  <div panel>
+    <h2>Details</h2>
+    <p>Details content goes here.</p>
+  </div>
+  <div panel>
+    <h2>Settings</h2>
+    <p>Settings content goes here.</p>
+  </div>
+</div>`,
+
+                dropdown: `<div dropdown>
+  <button dropdown-toggle>Actions</button>
+  <ul dropdown-menu>
+    <li dropdown-item on:click="handleEdit()">Edit</li>
+    <li dropdown-item on:click="handleDuplicate()">Duplicate</li>
+    <li dropdown-item disabled>Archive (unavailable)</li>
+    <li dropdown-item on:click="handleDelete()">Delete</li>
+  </ul>
+</div>`,
+
+                stepper: `<div stepper state="{ name: '', email: '', agreed: false }">
+  <div step step-label="Info">
+    <h3>Personal Information</h3>
+    <input model="name" required placeholder="Name" />
+    <input model="email" type="email" required placeholder="Email" />
+  </div>
+  <div step step-label="Terms" step-validate="agreed">
+    <h3>Terms &amp; Conditions</h3>
+    <label>
+      <input type="checkbox" model="agreed" />
+      I agree to the terms
+    </label>
+  </div>
+  <div step step-label="Done">
+    <h3>All Set!</h3>
+    <p>Welcome, <span bind="name"></span>!</p>
+  </div>
+</div>`,
+
+                table: `<div state="{ items: [] }">
+  <div get="/api/items" as="items">
+    <table sortable>
+      <thead fixed-header>
+        <tr>
+          <th sort="name" sort-default="asc">Name</th>
+          <th sort="value" sort-type="number">Value</th>
+          <th sort="date" sort-type="date">Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr each="item in items" key="item.id">
+          <td bind="item.name"></td>
+          <td bind="item.value"></td>
+          <td bind="item.date"></td>
+          <td><button on:click="edit(item)">Edit</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>`,
+
+                tree: `<ul tree>
+  <li branch="expanded">
+    Documents
+    <ul subtree>
+      <li branch>
+        Projects
+        <ul subtree>
+          <li>Report.pdf</li>
+          <li>Slides.pptx</li>
+        </ul>
+      </li>
+      <li>README.md</li>
+    </ul>
+  </li>
+  <li branch>
+    Photos
+    <ul subtree>
+      <li>Vacation.jpg</li>
+      <li>Profile.png</li>
+    </ul>
+  </li>
+</ul>`,
+
+                split: `<div split style="height: 100vh">
+  <div pane="250px" pane-min="150" pane-collapsible="true">
+    <h3>Sidebar</h3>
+    <nav>
+      <a route="/">Home</a>
+      <a route="/settings">Settings</a>
+    </nav>
+  </div>
+  <div pane>
+    <h3>Main Content</h3>
+    <p>Resize the gutter to adjust panel sizes.</p>
+  </div>
+</div>`,
+
                 nav: `<nav class="navbar">
   <a route="/" class="logo">App</a>
   <div class="nav-links">
@@ -409,7 +517,62 @@ export function registerTools(server: McpServer): void {
             }
             if (features.includes("dnd")) {
                 featureNotes.push(
-                    "Add drag/drop attributes for drag-and-drop support"
+                    "Add drag/drop attributes for drag-and-drop support (requires @erickxavier/nojs-elements plugin: NoJS.use(NoJSElements))"
+                );
+            }
+            if (features.includes("modal")) {
+                featureNotes.push(
+                    'Add modal="id", modal-open="id", modal-close for modal dialogs (requires @erickxavier/nojs-elements plugin: NoJS.use(NoJSElements))'
+                );
+            }
+            if (features.includes("dropdown")) {
+                featureNotes.push(
+                    "Add dropdown, dropdown-toggle, dropdown-menu, dropdown-item for dropdown menus (requires @erickxavier/nojs-elements plugin: NoJS.use(NoJSElements))"
+                );
+            }
+            if (features.includes("tooltip")) {
+                featureNotes.push(
+                    'Add tooltip="text" for hover/focus tooltips (requires @erickxavier/nojs-elements plugin: NoJS.use(NoJSElements))'
+                );
+            }
+            if (features.includes("popover")) {
+                featureNotes.push(
+                    'Add popover="id", popover-trigger, popover-dismiss for click popovers (requires @erickxavier/nojs-elements plugin: NoJS.use(NoJSElements))'
+                );
+            }
+            if (features.includes("toast")) {
+                featureNotes.push(
+                    'Add toast="expr" or use $toast() for toast notifications (requires @erickxavier/nojs-elements plugin: NoJS.use(NoJSElements))'
+                );
+            }
+            if (features.includes("tabs")) {
+                featureNotes.push(
+                    "Add tabs, tab, panel for tab navigation (requires @erickxavier/nojs-elements plugin: NoJS.use(NoJSElements))"
+                );
+            }
+            if (features.includes("tree")) {
+                featureNotes.push(
+                    "Add tree, branch, subtree for hierarchical tree views (requires @erickxavier/nojs-elements plugin: NoJS.use(NoJSElements))"
+                );
+            }
+            if (features.includes("stepper")) {
+                featureNotes.push(
+                    "Add stepper, step for multi-step wizards with validation (requires @erickxavier/nojs-elements plugin: NoJS.use(NoJSElements))"
+                );
+            }
+            if (features.includes("skeleton")) {
+                featureNotes.push(
+                    'Add skeleton="loading" for shimmer loading placeholders (requires @erickxavier/nojs-elements plugin: NoJS.use(NoJSElements))'
+                );
+            }
+            if (features.includes("split")) {
+                featureNotes.push(
+                    "Add split, pane for resizable split panels (requires @erickxavier/nojs-elements plugin: NoJS.use(NoJSElements))"
+                );
+            }
+            if (features.includes("table")) {
+                featureNotes.push(
+                    "Add sortable, sort, fixed-header, fixed-col for sortable tables (requires @erickxavier/nojs-elements plugin: NoJS.use(NoJSElements))"
                 );
             }
 

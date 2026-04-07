@@ -129,7 +129,7 @@ Complete reference of every No.JS directive.
 | `animate-stagger` | `animate-stagger="50"` | Stagger delay |
 | `transition` | `transition="fade"` | CSS transition |
 
-## Drag and Drop
+## Drag and Drop (requires `@erickxavier/nojs-elements` plugin)
 
 | Directive | Example | Description |
 |-----------|---------|-------------|

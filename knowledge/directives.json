@@ -1,5 +1,5 @@
 {
-    "version": "1.10.1",
+    "version": "1.11.0",
     "categories": [
         {
             "id": "data",
@@ -54,7 +54,7 @@
         {
             "id": "dnd",
             "name": "Drag and Drop",
-            "description": "Declarative drag-and-drop system"
+            "description": "Declarative drag-and-drop system (requires @erickxavier/nojs-elements plugin)"
         },
         {
             "id": "i18n",
@@ -77,9 +77,59 @@
             "description": "Utility directives"
         },
         {
-            "id": "head",
-            "name": "Head Management",
-            "description": "Directives that update <head> elements reactively from the page body"
+            "id": "modal",
+            "name": "Modal",
+            "description": "Declarative modal dialogs with focus trapping and stacking (requires @erickxavier/nojs-elements plugin)"
+        },
+        {
+            "id": "dropdown",
+            "name": "Dropdown",
+            "description": "Accessible dropdown menus with keyboard navigation (requires @erickxavier/nojs-elements plugin)"
+        },
+        {
+            "id": "tooltip",
+            "name": "Tooltip",
+            "description": "Hover/focus tooltips with positioning (requires @erickxavier/nojs-elements plugin)"
+        },
+        {
+            "id": "popover",
+            "name": "Popover",
+            "description": "Click-triggered popovers with light dismiss (requires @erickxavier/nojs-elements plugin)"
+        },
+        {
+            "id": "toast",
+            "name": "Toast",
+            "description": "Toast notifications with positioning and auto-dismiss (requires @erickxavier/nojs-elements plugin)"
+        },
+        {
+            "id": "tabs",
+            "name": "Tabs",
+            "description": "Tab panels with keyboard navigation and positioning (requires @erickxavier/nojs-elements plugin)"
+        },
+        {
+            "id": "tree",
+            "name": "Tree",
+            "description": "Hierarchical tree view with expand/collapse and keyboard navigation (requires @erickxavier/nojs-elements plugin)"
+        },
+        {
+            "id": "stepper",
+            "name": "Stepper",
+            "description": "Multi-step wizard with validation and progress indicator (requires @erickxavier/nojs-elements plugin)"
+        },
+        {
+            "id": "skeleton",
+            "name": "Skeleton",
+            "description": "Loading placeholder with shimmer animation (requires @erickxavier/nojs-elements plugin)"
+        },
+        {
+            "id": "split",
+            "name": "Split",
+            "description": "Resizable split panes with persistence and keyboard control (requires @erickxavier/nojs-elements plugin)"
+        },
+        {
+            "id": "table",
+            "name": "Sortable Table",
+            "description": "Column sorting, sticky headers, and sticky columns for tables (requires @erickxavier/nojs-elements plugin)"
         }
     ],
     "directives": [
@@ -698,6 +748,524 @@
             "syntax": "<element drag-list=\"items\" drag-multiple>"
         },
         {
+            "name": "modal",
+            "category": "modal",
+            "description": "Declare a modal dialog using the native Popover API with focus trapping, stacking z-index, and ARIA attributes",
+            "syntax": "<div modal=\"modal-id\">",
+            "examples": [
+                {
+                    "html": "<button modal-open=\"confirm-delete\">Delete</button>\n\n<div modal=\"confirm-delete\">\n  <h2>Are you sure?</h2>\n  <button modal-close>Cancel</button>\n  <button modal-close on:click=\"deleteAccount()\">Confirm</button>\n</div>",
+                    "description": "Confirmation modal with open/close triggers"
+                },
+                {
+                    "html": "<div modal=\"edit-user\" modal-class=\"dialog-wide\" modal-escape=\"false\">\n  <h2>Edit Profile</h2>\n  <form>\n    <input model=\"user.name\" />\n    <button modal-close on:click=\"save()\">Save</button>\n  </form>\n</div>",
+                    "description": "Modal with custom class and Escape disabled"
+                }
+            ],
+            "notes": "Plugin: @erickxavier/nojs-elements. Companion attributes: modal-class, modal-escape, modal-backdrop. Auto-generates unique ID if value is empty. Supports nested modals with z-index stacking (base 10000). ARIA: role=dialog, aria-modal=true, aria-labelledby, focus trap."
+        },
+        {
+            "name": "modal-open",
+            "category": "modal",
+            "description": "Open a modal dialog by ID on click",
+            "syntax": "<button modal-open=\"modal-id\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Without value, finds nearest modal in scope. Auto-adds aria-haspopup=dialog, aria-expanded, aria-controls."
+        },
+        {
+            "name": "modal-close",
+            "category": "modal",
+            "description": "Close a modal dialog. Without value, closes closest ancestor modal. With value, closes by ID",
+            "syntax": "<button modal-close> or <button modal-close=\"modal-id\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Focus returns to trigger element on close."
+        },
+        {
+            "name": "modal-class",
+            "category": "modal",
+            "description": "Additional CSS class(es) applied while the modal is open",
+            "syntax": "<div modal=\"id\" modal-class=\"dialog-wide\">",
+            "notes": "Plugin: @erickxavier/nojs-elements."
+        },
+        {
+            "name": "modal-escape",
+            "category": "modal",
+            "description": "Control whether Escape key and backdrop click close the modal",
+            "syntax": "<div modal=\"id\" modal-escape=\"false\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Default: true."
+        },
+        {
+            "name": "modal-backdrop",
+            "category": "modal",
+            "description": "Control whether a dark backdrop overlay is shown behind the modal",
+            "syntax": "<div modal=\"id\" modal-backdrop=\"false\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Default: true."
+        },
+        {
+            "name": "dropdown",
+            "category": "dropdown",
+            "description": "Wrap a toggle, menu, and items into a dropdown unit using the native Popover API for light-dismiss",
+            "syntax": "<div dropdown>",
+            "examples": [
+                {
+                    "html": "<div dropdown>\n  <button dropdown-toggle>Options</button>\n  <ul dropdown-menu>\n    <li dropdown-item>Edit</li>\n    <li dropdown-item>Duplicate</li>\n    <li dropdown-item>Delete</li>\n  </ul>\n</div>",
+                    "description": "Basic dropdown menu"
+                },
+                {
+                    "html": "<div dropdown dropdown-position=\"right\" dropdown-align=\"end\">\n  <button dropdown-toggle>More</button>\n  <ul dropdown-menu>\n    <li dropdown-item>Settings</li>\n    <li dropdown-item>Logout</li>\n  </ul>\n</div>",
+                    "description": "Dropdown positioned to the right with end alignment"
+                }
+            ],
+            "notes": "Plugin: @erickxavier/nojs-elements. Companion attributes: dropdown-position (bottom|top|left|right), dropdown-align (start|end). Menu uses position:fixed and auto-flips on viewport overflow."
+        },
+        {
+            "name": "dropdown-toggle",
+            "category": "dropdown",
+            "description": "Toggle button that opens/closes the dropdown menu on click",
+            "syntax": "<button dropdown-toggle>",
+            "notes": "Plugin: @erickxavier/nojs-elements. Must be inside a [dropdown] container. Auto-adds aria-haspopup=menu, aria-expanded, aria-controls."
+        },
+        {
+            "name": "dropdown-menu",
+            "category": "dropdown",
+            "description": "Popover menu panel that appears when the toggle is activated",
+            "syntax": "<ul dropdown-menu>",
+            "notes": "Plugin: @erickxavier/nojs-elements. Uses popover=auto for native light-dismiss. Auto-adds role=menu, .nojs-dropdown-menu class."
+        },
+        {
+            "name": "dropdown-item",
+            "category": "dropdown",
+            "description": "Actionable item inside a dropdown menu with keyboard navigation support",
+            "syntax": "<li dropdown-item>",
+            "notes": "Plugin: @erickxavier/nojs-elements. Auto-adds role=menuitem, tabindex=-1. Supports disabled attribute. Keyboard: Arrow keys navigate, Enter/Space activate, Escape closes."
+        },
+        {
+            "name": "dropdown-position",
+            "category": "dropdown",
+            "description": "Primary axis for dropdown menu placement",
+            "syntax": "<div dropdown dropdown-position=\"top\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Values: bottom (default), top, left, right."
+        },
+        {
+            "name": "dropdown-align",
+            "category": "dropdown",
+            "description": "Cross-axis alignment of the dropdown menu relative to the toggle",
+            "syntax": "<div dropdown dropdown-align=\"end\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Values: start (default), end."
+        },
+        {
+            "name": "tooltip",
+            "category": "tooltip",
+            "description": "Show a tooltip on hover/focus with automatic positioning",
+            "syntax": "<button tooltip=\"Save your changes\">",
+            "examples": [
+                {
+                    "html": "<button tooltip=\"Save your changes\">Save</button>",
+                    "description": "Basic tooltip on a button"
+                },
+                {
+                    "html": "<button tooltip=\"Delete this item\" tooltip-position=\"bottom\" tooltip-delay=\"500\">Delete</button>",
+                    "description": "Tooltip positioned below with custom delay"
+                }
+            ],
+            "notes": "Plugin: @erickxavier/nojs-elements. Companion attributes: tooltip-position (top|bottom|left|right, default top), tooltip-delay (ms, default 300), tooltip-disabled (expression). ARIA: role=tooltip, aria-describedby. Shows on focusin for keyboard accessibility."
+        },
+        {
+            "name": "tooltip-position",
+            "category": "tooltip",
+            "description": "Placement of the tooltip relative to the trigger element",
+            "syntax": "<element tooltip=\"text\" tooltip-position=\"bottom\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Values: top (default), bottom, left, right."
+        },
+        {
+            "name": "tooltip-delay",
+            "category": "tooltip",
+            "description": "Delay in milliseconds before the tooltip appears",
+            "syntax": "<element tooltip=\"text\" tooltip-delay=\"500\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Default: 300ms."
+        },
+        {
+            "name": "tooltip-disabled",
+            "category": "tooltip",
+            "description": "Reactive boolean expression that prevents the tooltip from showing when truthy",
+            "syntax": "<element tooltip=\"text\" tooltip-disabled=\"isLocked\">",
+            "notes": "Plugin: @erickxavier/nojs-elements."
+        },
+        {
+            "name": "popover",
+            "category": "popover",
+            "description": "Declare popover content with a unique ID, using the native Popover API for light-dismiss",
+            "syntax": "<div popover=\"popover-id\">",
+            "examples": [
+                {
+                    "html": "<button popover-trigger=\"user-menu\">Account</button>\n\n<div popover=\"user-menu\">\n  <nav>\n    <a href=\"/profile\">Profile</a>\n    <a href=\"/settings\">Settings</a>\n    <button popover-dismiss>Close</button>\n  </nav>\n</div>",
+                    "description": "Popover with trigger and dismiss button"
+                },
+                {
+                    "html": "<button popover-trigger=\"help-tip\">?</button>\n<div popover=\"help-tip\" popover-position=\"right\">\n  <p>Click here for more information.</p>\n</div>",
+                    "description": "Popover positioned to the right"
+                }
+            ],
+            "notes": "Plugin: @erickxavier/nojs-elements. Companion attribute: popover-position (top|bottom|left|right, default bottom). Uses native popover=auto for light-dismiss. ARIA: aria-haspopup, aria-expanded, aria-controls on triggers."
+        },
+        {
+            "name": "popover-trigger",
+            "category": "popover",
+            "description": "Toggle a popover open/closed on click. Without value, finds nearest popover in scope",
+            "syntax": "<button popover-trigger=\"popover-id\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Auto-adds aria-haspopup=true, aria-expanded, aria-controls."
+        },
+        {
+            "name": "popover-dismiss",
+            "category": "popover",
+            "description": "Close the closest ancestor popover on click",
+            "syntax": "<button popover-dismiss>",
+            "notes": "Plugin: @erickxavier/nojs-elements. Place inside a [popover] element."
+        },
+        {
+            "name": "popover-position",
+            "category": "popover",
+            "description": "Placement of the popover relative to its trigger element",
+            "syntax": "<div popover=\"id\" popover-position=\"right\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Values: top, bottom (default), left, right. 8px gap, viewport-aware flip logic."
+        },
+        {
+            "name": "toast-container",
+            "category": "toast",
+            "description": "Define where toast notifications appear on screen. Multiple containers can coexist at different positions",
+            "syntax": "<div toast-container=\"top-right\">",
+            "examples": [
+                {
+                    "html": "<div toast-container=\"top-right\"></div>\n<div toast-container=\"bottom-left\"></div>",
+                    "description": "Multiple toast containers at different positions"
+                }
+            ],
+            "notes": "Plugin: @erickxavier/nojs-elements. Positions: top-right (default), top-left, top-center, bottom-right, bottom-left, bottom-center. Auto-created on body if none declared. ARIA: role=log, aria-live=polite."
+        },
+        {
+            "name": "toast",
+            "category": "toast",
+            "description": "Watch an expression and show a toast notification when it changes to a truthy value",
+            "syntax": "<div toast=\"expression\">",
+            "examples": [
+                {
+                    "html": "<div state=\"{ message: '' }\">\n  <button on:click=\"message = 'Saved!'\" toast=\"message\" toast-type=\"success\">Save</button>\n</div>",
+                    "description": "Show success toast when message changes"
+                },
+                {
+                    "html": "<button on:click=\"$toast('Item deleted', 'error')\">Delete</button>",
+                    "description": "Programmatic toast via $toast() global function"
+                }
+            ],
+            "notes": "Plugin: @erickxavier/nojs-elements. Companion attributes: toast-type (info|success|warning|error, default info), toast-duration (ms, default 3000, 0 for permanent), toast-dismiss (true|false, default true). Global function: $toast(message, type?, duration?) returns HTMLElement."
+        },
+        {
+            "name": "toast-type",
+            "category": "toast",
+            "description": "Visual type of the toast notification",
+            "syntax": "<div toast=\"expr\" toast-type=\"success\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Values: info (default), success, warning, error. Set as data-type on the element."
+        },
+        {
+            "name": "toast-duration",
+            "category": "toast",
+            "description": "Auto-dismiss delay in milliseconds. Use 0 for permanent toasts",
+            "syntax": "<div toast=\"expr\" toast-duration=\"5000\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Default: 3000ms."
+        },
+        {
+            "name": "toast-dismiss",
+            "category": "toast",
+            "description": "Whether to show a dismiss button on the toast",
+            "syntax": "<div toast=\"expr\" toast-dismiss=\"false\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Default: true."
+        },
+        {
+            "name": "tabs",
+            "category": "tabs",
+            "description": "Tab container that pairs [tab] triggers with [panel] content by order",
+            "syntax": "<div tabs>",
+            "examples": [
+                {
+                    "html": "<div tabs>\n  <button tab>Profile</button>\n  <button tab>Settings</button>\n\n  <div panel>Profile content...</div>\n  <div panel>Settings content...</div>\n</div>",
+                    "description": "Basic tabs with two panels"
+                },
+                {
+                    "html": "<div tabs tab-position=\"left\">\n  <button tab>Overview</button>\n  <button tab tab-disabled=\"locked\">Locked</button>\n  <button tab>Details</button>\n\n  <div panel>Overview panel</div>\n  <div panel>Locked panel</div>\n  <div panel>Details panel</div>\n</div>",
+                    "description": "Vertical tabs with disabled tab"
+                }
+            ],
+            "notes": "Plugin: @erickxavier/nojs-elements. Value sets initial tab index (0-based, default 0). Companion attribute: tab-position (top|bottom|left|right, default top). ARIA: role=tablist, role=tab, role=tabpanel with full keyboard navigation."
+        },
+        {
+            "name": "tab",
+            "category": "tabs",
+            "description": "Mark an element as a tab trigger inside a [tabs] container",
+            "syntax": "<button tab>",
+            "notes": "Plugin: @erickxavier/nojs-elements. Companion attribute: tab-disabled (expression). Paired with [panel] by order. ARIA: role=tab, aria-selected, aria-controls."
+        },
+        {
+            "name": "tab-disabled",
+            "category": "tabs",
+            "description": "Disable a tab so it cannot be activated and is skipped by keyboard navigation",
+            "syntax": "<button tab tab-disabled=\"isLocked\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Reactive expression."
+        },
+        {
+            "name": "panel",
+            "category": "tabs",
+            "description": "Mark an element as a tab panel inside a [tabs] container. Paired with [tab] by order",
+            "syntax": "<div panel>",
+            "notes": "Plugin: @erickxavier/nojs-elements. ARIA: role=tabpanel, aria-labelledby. Inactive panels get aria-hidden=true and inert."
+        },
+        {
+            "name": "tab-position",
+            "category": "tabs",
+            "description": "Placement of the tab list relative to the panels",
+            "syntax": "<div tabs tab-position=\"left\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Values: top (default), bottom, left, right."
+        },
+        {
+            "name": "tree",
+            "category": "tree",
+            "description": "Declare a tree root for hierarchical expand/collapse navigation",
+            "syntax": "<ul tree>",
+            "examples": [
+                {
+                    "html": "<ul tree>\n  <li branch>\n    Documents\n    <ul subtree>\n      <li branch>\n        Work\n        <ul subtree>\n          <li>Report.pdf</li>\n        </ul>\n      </li>\n      <li>README.md</li>\n    </ul>\n  </li>\n</ul>",
+                    "description": "File tree with nested branches"
+                }
+            ],
+            "notes": "Plugin: @erickxavier/nojs-elements. Companion attribute: tree-icon (true|false, default true). ARIA: role=tree. Full keyboard navigation with typeahead search."
+        },
+        {
+            "name": "branch",
+            "category": "tree",
+            "description": "Expandable tree item that can contain a [subtree] child",
+            "syntax": "<li branch> or <li branch=\"expanded\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Value 'expanded' starts the branch open. ARIA: role=treeitem, aria-expanded, aria-selected. Clicking selects the branch (mutually exclusive)."
+        },
+        {
+            "name": "subtree",
+            "category": "tree",
+            "description": "Collapsible content group inside a [branch]",
+            "syntax": "<ul subtree>",
+            "notes": "Plugin: @erickxavier/nojs-elements. ARIA: role=group, aria-hidden. Shown/hidden when parent branch is toggled."
+        },
+        {
+            "name": "tree-icon",
+            "category": "tree",
+            "description": "Show or hide the built-in expand/collapse triangle icons",
+            "syntax": "<ul tree tree-icon=\"false\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Default: true."
+        },
+        {
+            "name": "stepper",
+            "category": "stepper",
+            "description": "Multi-step wizard container with progress indicator and navigation",
+            "syntax": "<div stepper>",
+            "examples": [
+                {
+                    "html": "<div stepper>\n  <div step step-label=\"Info\">\n    <input model=\"name\" required />\n  </div>\n  <div step step-label=\"Review\">\n    <p>Name: <span bind=\"name\"></span></p>\n  </div>\n</div>",
+                    "description": "Two-step form with validation"
+                },
+                {
+                    "html": "<div stepper stepper-mode=\"free\">\n  <div step step-label=\"General\">...</div>\n  <div step step-label=\"Theme\">...</div>\n  <div step step-label=\"Advanced\">...</div>\n</div>",
+                    "description": "Free mode stepper (any step clickable)"
+                }
+            ],
+            "notes": "Plugin: @erickxavier/nojs-elements. Value sets initial step index (0-based, default 0). Companion attributes: stepper-mode (linear|free, default linear), stepper-indicator (true|false), stepper-nav (true|false). Provides $stepper context: current, total, isFirst, isLast, next(), prev(), goTo(). Event: step-change."
+        },
+        {
+            "name": "step",
+            "category": "stepper",
+            "description": "Define a step panel inside a [stepper] container",
+            "syntax": "<div step>",
+            "notes": "Plugin: @erickxavier/nojs-elements. Companion attributes: step-label (string, default 'Step N'), step-validate (expression for linear mode validation)."
+        },
+        {
+            "name": "step-label",
+            "category": "stepper",
+            "description": "Custom label shown in the stepper progress indicator",
+            "syntax": "<div step step-label=\"Payment\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Default: 'Step N'."
+        },
+        {
+            "name": "step-validate",
+            "category": "stepper",
+            "description": "Expression that must be truthy for the step to pass validation in linear mode",
+            "syntax": "<div step step-validate=\"age >= 18\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Checked in addition to required inputs."
+        },
+        {
+            "name": "stepper-mode",
+            "category": "stepper",
+            "description": "Navigation mode for the stepper",
+            "syntax": "<div stepper stepper-mode=\"free\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Values: linear (default, validates before advancing), free (any step clickable)."
+        },
+        {
+            "name": "stepper-indicator",
+            "category": "stepper",
+            "description": "Show or hide the stepper progress indicator",
+            "syntax": "<div stepper stepper-indicator=\"false\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Default: true."
+        },
+        {
+            "name": "stepper-nav",
+            "category": "stepper",
+            "description": "Show or hide the Previous/Next navigation buttons",
+            "syntax": "<div stepper stepper-nav=\"false\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Default: true."
+        },
+        {
+            "name": "skeleton",
+            "category": "skeleton",
+            "description": "Display a shimmer loading placeholder while a reactive expression is truthy",
+            "syntax": "<element skeleton=\"loading\">",
+            "examples": [
+                {
+                    "html": "<h2 skeleton=\"loading\">Article Title</h2>\n<p skeleton=\"loading\">Content appears after loading.</p>",
+                    "description": "Text skeleton on heading and paragraph"
+                },
+                {
+                    "html": "<div skeleton=\"loading\" skeleton-type=\"circle\" skeleton-size=\"64\"></div>",
+                    "description": "Circle avatar placeholder"
+                },
+                {
+                    "html": "<div skeleton=\"loading\" skeleton-lines=\"3\" style=\"width: 400px;\"></div>",
+                    "description": "Multi-line text placeholder"
+                }
+            ],
+            "notes": "Plugin: @erickxavier/nojs-elements. Companion attributes: skeleton-type (text|circle|rect, default text), skeleton-lines (number), skeleton-size (number/string for circle/rect dimensions). ARIA: aria-busy=true while active. Shimmer adapts to dark mode via color-mix()."
+        },
+        {
+            "name": "skeleton-type",
+            "category": "skeleton",
+            "description": "Shape of the skeleton placeholder",
+            "syntax": "<element skeleton=\"expr\" skeleton-type=\"circle\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Values: text (default, full-width bars), circle (circular), rect (rectangular)."
+        },
+        {
+            "name": "skeleton-lines",
+            "category": "skeleton",
+            "description": "Number of simulated text lines for the skeleton placeholder",
+            "syntax": "<div skeleton=\"expr\" skeleton-lines=\"3\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Last line is 60% width for a natural paragraph look."
+        },
+        {
+            "name": "skeleton-size",
+            "category": "skeleton",
+            "description": "Explicit width and height for circle or rect skeleton types",
+            "syntax": "<div skeleton=\"expr\" skeleton-type=\"circle\" skeleton-size=\"64\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Appends px if value is a bare number."
+        },
+        {
+            "name": "split",
+            "category": "split",
+            "description": "Create a resizable split container with draggable gutters between panes",
+            "syntax": "<div split>",
+            "examples": [
+                {
+                    "html": "<div split style=\"height: 400px\">\n  <div pane=\"30%\">Left panel</div>\n  <div pane>Right panel</div>\n</div>",
+                    "description": "Horizontal split with percentage size"
+                },
+                {
+                    "html": "<div split=\"vertical\" split-persist=\"editor-layout\" style=\"height: 100vh\">\n  <div pane=\"250px\" pane-min=\"150\">Sidebar</div>\n  <div pane>Editor</div>\n  <div pane=\"300px\">Preview</div>\n</div>",
+                    "description": "Vertical split with persistence and constraints"
+                }
+            ],
+            "notes": "Plugin: @erickxavier/nojs-elements. Value: horizontal (default) or vertical. Companion attributes: split-gutter (px, default 6), split-persist (localStorage key). Events: split-resize, split-collapse. ARIA: role=separator on gutters with keyboard control."
+        },
+        {
+            "name": "pane",
+            "category": "split",
+            "description": "Define a resizable pane inside a [split] container",
+            "syntax": "<div pane=\"250px\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Value: CSS size (px or %). Companion attributes: pane-min (px, default 0), pane-max (px, default Infinity), pane-collapsible (true for double-click collapse)."
+        },
+        {
+            "name": "pane-min",
+            "category": "split",
+            "description": "Minimum pane size in pixels",
+            "syntax": "<div pane=\"250px\" pane-min=\"150\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Default: 0."
+        },
+        {
+            "name": "pane-max",
+            "category": "split",
+            "description": "Maximum pane size in pixels",
+            "syntax": "<div pane=\"250px\" pane-max=\"600\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Default: Infinity."
+        },
+        {
+            "name": "pane-collapsible",
+            "category": "split",
+            "description": "Enable collapse/expand of a pane via double-click on the adjacent gutter",
+            "syntax": "<div pane=\"250px\" pane-collapsible=\"true\">",
+            "notes": "Plugin: @erickxavier/nojs-elements."
+        },
+        {
+            "name": "split-gutter",
+            "category": "split",
+            "description": "Gutter width (horizontal) or height (vertical) in pixels",
+            "syntax": "<div split split-gutter=\"12\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Default: 6px."
+        },
+        {
+            "name": "split-persist",
+            "category": "split",
+            "description": "localStorage key for saving/restoring pane sizes across sessions",
+            "syntax": "<div split split-persist=\"editor-layout\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Stored under nojs-split:<key>. Discarded if pane count changes."
+        },
+        {
+            "name": "sortable",
+            "category": "table",
+            "description": "Enable column sorting on a table. Sorting mutates the data array and each re-renders rows",
+            "syntax": "<table sortable>",
+            "examples": [
+                {
+                    "html": "<table sortable>\n  <thead>\n    <tr>\n      <th sort=\"name\">Name</th>\n      <th sort=\"age\" sort-type=\"number\">Age</th>\n      <th sort=\"email\">Email</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr each=\"user in users\">\n      <td bind=\"user.name\"></td>\n      <td bind=\"user.age\"></td>\n      <td bind=\"user.email\"></td>\n    </tr>\n  </tbody>\n</table>",
+                    "description": "Sortable table with string and numeric columns"
+                }
+            ],
+            "notes": "Plugin: @erickxavier/nojs-elements. Works with each directive in tbody. ARIA: aria-sort on headers. Clicking cycles ascending, descending, none."
+        },
+        {
+            "name": "sort",
+            "category": "table",
+            "description": "Mark a table header as sortable by a property key",
+            "syntax": "<th sort=\"name\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Companion attributes: sort-type (string|number|date, default string), sort-default (asc|desc). Clicking cycles: ascending, descending, none."
+        },
+        {
+            "name": "sort-type",
+            "category": "table",
+            "description": "Comparator type for column sorting",
+            "syntax": "<th sort=\"age\" sort-type=\"number\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Values: string (localeCompare), number (numeric), date (chronological). Default: string."
+        },
+        {
+            "name": "sort-default",
+            "category": "table",
+            "description": "Initial sort direction applied on page load",
+            "syntax": "<th sort=\"name\" sort-default=\"asc\">",
+            "notes": "Plugin: @erickxavier/nojs-elements. Values: asc, desc."
+        },
+        {
+            "name": "fixed-header",
+            "category": "table",
+            "description": "Make a table header sticky at the top of its scroll container",
+            "syntax": "<thead fixed-header>",
+            "notes": "Plugin: @erickxavier/nojs-elements. Applies position:sticky; top:0. z-index: 2."
+        },
+        {
+            "name": "fixed-col",
+            "category": "table",
+            "description": "Pin a table column to the left edge during horizontal scrolling",
+            "syntax": "<th fixed-col> or <td fixed-col>",
+            "notes": "Plugin: @erickxavier/nojs-elements. Applies position:sticky; left:0. z-index: 1. Intersection with fixed-header gets z-index: 3."
+        },
+        {
             "name": "t",
             "category": "i18n",
             "description": "Translate element content using an i18n key",
@@ -831,60 +1399,6 @@
             "category": "misc",
             "description": "Error boundary — renders fallback template on error",
             "syntax": "<element error-boundary=\"#fallback\">"
-        },
-        {
-            "name": "page-title",
-            "category": "head",
-            "description": "Updates document.title reactively. Place on <div hidden> in the body. For SPA routing use page-title on <template route> instead.",
-            "syntax": "<div hidden page-title=\"expression\"></div>",
-            "examples": [
-                {
-                    "html": "<div hidden page-title=\"product.name + ' | My Store'\"></div>",
-                    "description": "Dynamic document title from state"
-                },
-                {
-                    "html": "<div hidden page-title=\"'About Us | My Store'\"></div>",
-                    "description": "Static document title"
-                }
-            ],
-            "notes": "Value is a No.JS expression — use single-quoted strings. Priority 20. Reactive via _watchExpr."
-        },
-        {
-            "name": "page-description",
-            "category": "head",
-            "description": "Creates or updates <meta name=\"description\" content=\"...\"> in <head>. Place on <div hidden>. Reactive.",
-            "syntax": "<div hidden page-description=\"expression\"></div>",
-            "examples": [
-                {
-                    "html": "<div hidden page-description=\"product.description\"></div>",
-                    "description": "Set meta description from product state"
-                }
-            ]
-        },
-        {
-            "name": "page-canonical",
-            "category": "head",
-            "description": "Creates or updates <link rel=\"canonical\" href=\"...\"> in <head>. Place on <div hidden>. Reactive.",
-            "syntax": "<div hidden page-canonical=\"expression\"></div>",
-            "examples": [
-                {
-                    "html": "<div hidden page-canonical=\"'/products/' + product.slug\"></div>",
-                    "description": "Set canonical URL from product slug"
-                }
-            ]
-        },
-        {
-            "name": "page-jsonld",
-            "category": "head",
-            "description": "Creates or updates <script type=\"application/ld+json\" data-nojs> in <head>. Write JSON-LD template as element body with {placeholder} expressions. Place on <div hidden>. Reactive.",
-            "syntax": "<div hidden page-jsonld>{ JSON-LD template }</div>",
-            "examples": [
-                {
-                    "html": "<div hidden page-jsonld>\n  {\n    \"@context\": \"https://schema.org\",\n    \"@type\": \"Product\",\n    \"name\": \"{product.name}\",\n    \"offers\": { \"@type\": \"Offer\", \"price\": \"{product.price}\" }\n  }\n</div>",
-                    "description": "Structured data for a product page"
-                }
-            ],
-            "notes": "JSON-LD template captured once at init. {placeholder} expressions re-evaluated reactively. Structural JSON braces are not interpreted as placeholders."
         }
     ]
 }

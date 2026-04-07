@@ -1,5 +1,7 @@
 # Drag and Drop
 
+> **Plugin required:** Drag and Drop has been moved to the `@erickxavier/nojs-elements` plugin. Install and register with `NoJS.use(NoJSElements)` to use these directives.
+
 ## `drag` — Make an Element Draggable
 
 ```html
